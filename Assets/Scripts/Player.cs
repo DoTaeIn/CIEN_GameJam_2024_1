@@ -1,3 +1,4 @@
+using System;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -55,11 +56,11 @@ public class Player : NetworkBehaviour
         rb.velocity = new Vector3(move.x, move.y, 0);
 
         // 네트워크에서 다른 클라이언트들에게 위치 업데이트
-        UpdatePositionServerRpc(transform.position);
+        UpdatePositionServerRpc(rb.position,rb.velocity);
     }
 
     
-    [ServerRpc(RequireOwnership = false)]
+    [ServerRpc]
     public void DamagedServerRpc(Vector3 dir, float damage)
     {
         DamagedClientRpc(dir, 1f);
@@ -72,22 +73,36 @@ public class Player : NetworkBehaviour
         if (IsOwner)
         {
             rb.AddForce(dir*10,ForceMode2D.Impulse);
+            UpdatePositionServerRpc(rb.position,rb.velocity);
         }
     }
-    
-    [ServerRpc]
-    private void UpdatePositionServerRpc(Vector3 newPosition)
+
+    private void FixedUpdate()
     {
-        transform.position = newPosition;
-        UpdatePositionClientRpc(newPosition);
+        if(IsOwner)
+            UpdatePositionServerRpc(rb.position,rb.velocity);
+    }
+
+    [ServerRpc]
+    private void UpdatePositionServerRpc(Vector3 position,Vector3 velocity)
+    {
+        
+            rb.position = position;
+            rb.velocity = velocity;
+            UpdatePositionClientRpc(position,velocity);
+        
+        
+        
+        
     }
 
     [ClientRpc]
-    private void UpdatePositionClientRpc(Vector3 newPosition)
+    private void UpdatePositionClientRpc(Vector3 position,Vector3 velocity)
     {
         if (!IsOwner)
         {
-            transform.position = newPosition;
+            rb.position = position;
+            rb.velocity = velocity;
         }
     }
 }
