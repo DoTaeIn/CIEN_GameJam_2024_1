@@ -13,7 +13,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RelayManager : MonoBehaviour
+public class RelayManager : NetworkBehaviour
 {
     [SerializeField] private Text joinCodeText;
     [SerializeField] private InputField joinInputField;

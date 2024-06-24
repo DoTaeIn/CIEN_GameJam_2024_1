@@ -6,6 +6,9 @@ public class Player : NetworkBehaviour
     public float moveSpeed = 5f;
     private Rigidbody2D rb;
 
+
+    private NetworkVariable<float> HP = new NetworkVariable<float>(100, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -18,7 +21,29 @@ public class Player : NetworkBehaviour
         if (IsOwner)
         {
             Move();
+            if (Input.GetKeyDown("o"))
+            {
+                //Debug.Log("test");
+                /*
+                foreach (var VARIABLE in NetworkManager.Singleton.ConnectedClients)
+                {
+                    if(VARIABLE==NetworkManager.Singleton.LocalClient)
+                }*/
+                
+                //if(NetworkManager.Singleton.Cli)
+
+                foreach (var a in GameObject.FindGameObjectsWithTag("Player"))
+                {
+                    if (a.GetHashCode() != gameObject.GetHashCode())
+                    {
+                        Debug.Log("test`1");
+                        a.GetComponent<Player>().DamagedServerRpc(Vector3.right, 1f);
+                    }
+                }
+            }
         }
+
+        
     }
 
     private void Move()
@@ -33,6 +58,23 @@ public class Player : NetworkBehaviour
         UpdatePositionServerRpc(transform.position);
     }
 
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void DamagedServerRpc(Vector3 dir, float damage)
+    {
+        DamagedClientRpc(dir, 1f);
+    }
+
+    
+    [ClientRpc]
+    public void DamagedClientRpc(Vector3 dir, float damage)
+    {
+        if (IsOwner)
+        {
+            rb.AddForce(dir*10,ForceMode2D.Impulse);
+        }
+    }
+    
     [ServerRpc]
     private void UpdatePositionServerRpc(Vector3 newPosition)
     {
