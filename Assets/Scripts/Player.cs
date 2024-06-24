@@ -7,8 +7,35 @@ public class Player : NetworkBehaviour
     public float moveSpeed = 5f;
     private Rigidbody2D rb;
 
+    public float _hp=100;
+    public float Hp
+    {
+        get
+        {
+            return _hp;
+        }
+        set
+        {
+            _hp = value;
+            SetHpServerRpc(value);
+        }
+    }
 
-    private NetworkVariable<float> HP = new NetworkVariable<float>(100, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [ServerRpc]
+    private void SetHpServerRpc(float hp)
+    {
+        _hp = hp;
+        SetHpClientRpc(hp);
+    }
+
+    [ClientRpc]
+    private void SetHpClientRpc(float hp)
+    {
+        if (!IsOwner)
+        {
+            _hp = hp;
+        }
+    }
 
     private void Start()
     {
@@ -24,15 +51,6 @@ public class Player : NetworkBehaviour
             //Move();
             if (Input.GetKeyDown("o"))
             {
-                //Debug.Log("test");
-                /*
-                foreach (var VARIABLE in NetworkManager.Singleton.ConnectedClients)
-                {
-                    if(VARIABLE==NetworkManager.Singleton.LocalClient)
-                }*/
-                
-                //if(NetworkManager.Singleton.Cli)
-
                 foreach (var a in GameObject.FindGameObjectsWithTag("Player"))
                 {
                     if (a.GetHashCode() != gameObject.GetHashCode())
@@ -57,14 +75,6 @@ public class Player : NetworkBehaviour
         {
             rb.velocity = new Vector3(move.x, move.y, 0);
         }
-
-        // 네트워크에서 다른 클라이언트들에게 위치 업데이트
-        //UpdatePositionServerRpc(rb.position,rb.velocity);
-    }
-
-    public void asdf(Vector3 dir, float damage)
-    {
-        DamagedServerRpc( dir,  damage);
     }
 
     
@@ -81,6 +91,7 @@ public class Player : NetworkBehaviour
         if (IsOwner)
         {
             rb.AddForce(dir*10,ForceMode2D.Impulse);
+            Hp -= damage;
             UpdatePositionServerRpc(rb.position,rb.velocity);
         }
     }
