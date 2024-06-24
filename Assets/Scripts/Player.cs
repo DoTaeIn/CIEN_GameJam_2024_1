@@ -21,7 +21,7 @@ public class Player : NetworkBehaviour
     {
         if (IsOwner)
         {
-            Move();
+            //Move();
             if (Input.GetKeyDown("o"))
             {
                 //Debug.Log("test");
@@ -53,14 +53,22 @@ public class Player : NetworkBehaviour
         float moveY = Input.GetAxis("Vertical");
 
         Vector3 move = new Vector3(moveX, moveY, 0) * moveSpeed;
-        rb.velocity = new Vector3(move.x, move.y, 0);
+        if (move!=Vector3.zero)
+        {
+            rb.velocity = new Vector3(move.x, move.y, 0);
+        }
 
         // 네트워크에서 다른 클라이언트들에게 위치 업데이트
-        UpdatePositionServerRpc(rb.position,rb.velocity);
+        //UpdatePositionServerRpc(rb.position,rb.velocity);
+    }
+
+    public void asdf(Vector3 dir, float damage)
+    {
+        DamagedServerRpc( dir,  damage);
     }
 
     
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void DamagedServerRpc(Vector3 dir, float damage)
     {
         DamagedClientRpc(dir, 1f);
@@ -79,8 +87,11 @@ public class Player : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if(IsOwner)
-            UpdatePositionServerRpc(rb.position,rb.velocity);
+        if (IsOwner)
+        {
+            Move();
+            UpdatePositionServerRpc(rb.position, rb.velocity);
+        }
     }
 
     [ServerRpc]
@@ -89,6 +100,7 @@ public class Player : NetworkBehaviour
         
             rb.position = position;
             rb.velocity = velocity;
+            Debug.Log(position);Debug.Log(velocity);
             UpdatePositionClientRpc(position,velocity);
         
         
