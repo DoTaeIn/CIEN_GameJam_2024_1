@@ -1,20 +1,22 @@
 using System;
+using System.Collections;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : NetworkBehaviour
 {
     public float moveSpeed = 5f;
     private Rigidbody2D rb;
-
+    private SpriteRenderer _spriteRenderer;
 
     private NetworkVariable<float> HP = new NetworkVariable<float>(100, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
 
-        
     }
 
     private void Update()
@@ -24,21 +26,14 @@ public class Player : NetworkBehaviour
             //Move();
             if (Input.GetKeyDown("o"))
             {
-                //Debug.Log("test");
-                /*
-                foreach (var VARIABLE in NetworkManager.Singleton.ConnectedClients)
-                {
-                    if(VARIABLE==NetworkManager.Singleton.LocalClient)
-                }*/
-                
-                //if(NetworkManager.Singleton.Cli)
-
                 foreach (var a in GameObject.FindGameObjectsWithTag("Player"))
                 {
                     if (a.GetHashCode() != gameObject.GetHashCode())
                     {
                         Debug.Log("test`1");
-                        a.GetComponent<Player>().DamagedServerRpc(Vector3.right, 1f);
+                        Vector3 dir = a.transform.position - gameObject.transform.position;
+                        a.GetComponent<Player>().DamagedServerRpc(dir, 1f);
+                       
                     }
                 }
             }
@@ -62,16 +57,15 @@ public class Player : NetworkBehaviour
         //UpdatePositionServerRpc(rb.position,rb.velocity);
     }
 
-    public void asdf(Vector3 dir, float damage)
-    {
-        DamagedServerRpc( dir,  damage);
-    }
 
     
     [ServerRpc(RequireOwnership = false)]
     public void DamagedServerRpc(Vector3 dir, float damage)
     {
         DamagedClientRpc(dir, 1f);
+        gameObject.layer = 1;
+        _spriteRenderer.color = new Color(233, 233, 233, 250);
+        StartCoroutine("BeVulnerable", 1);
     }
 
     
@@ -82,6 +76,7 @@ public class Player : NetworkBehaviour
         {
             rb.AddForce(dir*10,ForceMode2D.Impulse);
             UpdatePositionServerRpc(rb.position,rb.velocity);
+            
         }
     }
 
@@ -116,5 +111,21 @@ public class Player : NetworkBehaviour
             rb.position = position;
             rb.velocity = velocity;
         }
+    }
+
+
+    
+    
+    IEnumerator BeVulnerable()
+    {
+        foreach (var a in GameObject.FindGameObjectsWithTag("Player"))
+        {
+            if (a.GetHashCode() != gameObject.GetHashCode())
+            {
+                a.GetComponent<SpriteRenderer>().color = Color.white;
+                a.gameObject.layer = 2;
+            }
+        }
+        yield return null;
     }
 }
