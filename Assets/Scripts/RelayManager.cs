@@ -19,6 +19,7 @@ public class RelayManager : MonoBehaviour
     [SerializeField] private InputField joinInputField;
     [SerializeField] private GameObject buttons;
     [SerializeField] private GameObject playerPrefab; // 플레이어 프리팹 추가
+    [SerializeField] private NetworkTimer _timer;
 
     private UnityTransport transport;
     private const int MaxPlayers = 2;
@@ -49,7 +50,12 @@ public class RelayManager : MonoBehaviour
         Allocation a = await RelayService.Instance.CreateAllocationAsync(MaxPlayers);
         joinCodeText.text = await RelayService.Instance.GetJoinCodeAsync(a.AllocationId);
         transport.SetHostRelayData(a.RelayServer.IpV4, (ushort)a.RelayServer.Port, a.AllocationIdBytes, a.Key, a.ConnectionData);
-
+        
+        if (NetworkManager.Singleton.IsHost)
+        {
+            _timer.StartTimer(); // 타이머 시작
+        }
+        
         NetworkManager.Singleton.StartHost();
     }
 
@@ -74,14 +80,15 @@ public class RelayManager : MonoBehaviour
     {
         if (NetworkManager.Singleton.IsServer && clientId != NetworkManager.Singleton.LocalClientId)
         {
-            SpawnPlayer(clientId);
+            //SpawnPlayer(clientId);
         }
     }
-
+    /*
     private void SpawnPlayer(ulong clientId)
     {
         GameObject playerInstance = Instantiate(playerPrefab);
         NetworkObject networkObject = playerInstance.GetComponent<NetworkObject>();
         networkObject.SpawnAsPlayerObject(clientId);
     }
+    */
 }
