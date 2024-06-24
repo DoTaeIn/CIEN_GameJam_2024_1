@@ -51,10 +51,12 @@ public class RelayManager : MonoBehaviour
         joinCodeText.text = await RelayService.Instance.GetJoinCodeAsync(a.AllocationId);
         transport.SetHostRelayData(a.RelayServer.IpV4, (ushort)a.RelayServer.Port, a.AllocationIdBytes, a.Key, a.ConnectionData);
         
+        /*
         if (NetworkManager.Singleton.IsHost)
         {
             _timer.StartTimer(); // 타이머 시작
         }
+        */
         
         NetworkManager.Singleton.StartHost();
     }

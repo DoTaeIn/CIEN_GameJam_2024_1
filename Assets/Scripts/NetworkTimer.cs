@@ -8,7 +8,8 @@ public class NetworkTimer : NetworkBehaviour
 {
     [SerializeField] private Text timerText;
     private float startTime;
-    private float timerDuration = 300f; // 5분 타이머
+    private float timerDuration = 300f;
+    public bool isTimerRunning = false;// 5분 타이머
 
     private NetworkVariable<float> networkTime = new NetworkVariable<float>(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
@@ -43,8 +44,7 @@ public class NetworkTimer : NetworkBehaviour
     {
         if (IsServer)
         {
-            startTime = Time.time;
-            networkTime.Value = startTime;
+            isTimerRunning = true;
         }
     }
 
@@ -52,7 +52,7 @@ public class NetworkTimer : NetworkBehaviour
     {
         if (IsServer)
         {
-            networkTime.Value = timerDuration; // 타이머를 종료 값으로 설정
+            isTimerRunning = false;
         }
     }
 }
