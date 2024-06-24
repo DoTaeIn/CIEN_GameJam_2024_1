@@ -8,6 +8,36 @@ public class Player : NetworkBehaviour
 {
     public float moveSpeed = 5f;
     private Rigidbody2D rb;
+
+    public float _hp=100;
+    public float Hp
+    {
+        get
+        {
+            return _hp;
+        }
+        set
+        {
+            _hp = value;
+            SetHpServerRpc(value);
+        }
+    }
+
+    [ServerRpc]
+    private void SetHpServerRpc(float hp)
+    {
+        _hp = hp;
+        SetHpClientRpc(hp);
+    }
+
+    [ClientRpc]
+    private void SetHpClientRpc(float hp)
+    {
+        if (!IsOwner)
+        {
+            _hp = hp;
+        }
+    }
     private SpriteRenderer _spriteRenderer;
 
     private NetworkVariable<float> HP = new NetworkVariable<float>(100, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
@@ -52,6 +82,7 @@ public class Player : NetworkBehaviour
         {
             rb.velocity = new Vector3(move.x, move.y, 0);
         }
+    }
 
         // 네트워크에서 다른 클라이언트들에게 위치 업데이트
         //UpdatePositionServerRpc(rb.position,rb.velocity);
@@ -75,6 +106,7 @@ public class Player : NetworkBehaviour
         if (IsOwner)
         {
             rb.AddForce(dir*10,ForceMode2D.Impulse);
+            Hp -= damage;
             UpdatePositionServerRpc(rb.position,rb.velocity);
             
         }
