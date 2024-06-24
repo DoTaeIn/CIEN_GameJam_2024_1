@@ -24,10 +24,12 @@ public class NetworkTimer : NetworkBehaviour
 
     private void Update()
     {
-        if (IsServer)
+        if(IsServer && isTimerRunning)
         {
-            networkTime.Value = Time.time - startTime;
+            networkTime.Value += Time.deltaTime;
         }
+
+        UpdateTimerUI(networkTime.Value);
 
         UpdateTimerUI(networkTime.Value);
     }

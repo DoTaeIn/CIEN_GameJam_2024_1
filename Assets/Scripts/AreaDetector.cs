@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class AreaDetector : NetworkBehaviour
+public class AreaDetector : MonoBehaviour
 {
     private NetworkTimer _timer;
 
@@ -13,25 +13,27 @@ public class AreaDetector : NetworkBehaviour
         _timer = FindObjectOfType<NetworkTimer>();
     }
     
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log(other.tag);
         if (other.CompareTag("Player"))
         {
-            if (IsServer)
+            if (NetworkManager.Singleton.IsServer)
             {
                 _timer.isTimerRunning = true;
             }
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    private void OnTriggerExit2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            if (IsServer)
+            if (NetworkManager.Singleton.IsServer)
             {
                 _timer.isTimerRunning = false;
             }
         }
     }
+
 }
