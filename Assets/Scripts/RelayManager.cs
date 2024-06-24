@@ -66,13 +66,13 @@ public class RelayManager : MonoBehaviour
     {
         if (NetworkManager.Singleton.IsHost)
         {
-            SpawnPlayer(NetworkManager.Singleton.LocalClientId);
+            //SpawnPlayer(NetworkManager.Singleton.LocalClientId);
         }
     }
 
     private void OnClientConnected(ulong clientId)
     {
-        if (NetworkManager.Singleton.IsServer)
+        if (NetworkManager.Singleton.IsServer && clientId != NetworkManager.Singleton.LocalClientId)
         {
             SpawnPlayer(clientId);
         }
