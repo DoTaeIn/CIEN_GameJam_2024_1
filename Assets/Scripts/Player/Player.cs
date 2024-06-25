@@ -51,7 +51,8 @@ public class Player : NetworkBehaviour
 
     [Header("Weapon Prefabs")]
     [SerializeField] private GameObject Bomb_Prefab;
-    
+    [SerializeField] private GameObject Poison_Prefab;
+    private bool _isDaggerDelay, _isPoisonDelay, _isBombDelay,_isDashDelay;
     [Header("Charging & Dash Settings")]
     [SerializeField] private float DashSpeed = 10f;
     [SerializeField] private float DashDuration = 0.2f;
@@ -179,9 +180,20 @@ public class Player : NetworkBehaviour
             }
         }
     }
-    
+
+    [ServerRpc]
+    private void SpawnPoisonServerRpc()
+    {
+        Unity.Netcode.NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(Poison_Prefab.GetComponent<NetworkObject>(),OwnerClientId, false, false, false, transform.position);
+    }
     private void Update()
     {
+        if (Input.GetKeyDown("n")&& !_isPoisonDelay)
+        {
+            SpawnPoisonServerRpc();
+            _isPoisonDelay = true;
+            Invoke(nameof(PoisonDelay),5);
+        }
         if (Input.GetKeyDown("t"))
         {
             foreach (var VARIABLE in GameObject.FindGameObjectsWithTag("Player"))
@@ -236,7 +248,7 @@ public class Player : NetworkBehaviour
 
         if (IsOwner)
         {
-            if (Input.GetKeyDown("h"))
+            if (Input.GetKeyDown("h")&& !_isDaggerDelay)
             {
 
                 if (isCollision)
@@ -256,6 +268,9 @@ public class Player : NetworkBehaviour
                 {
                     SetDaggerServerRpc();
                 }
+
+                _isDaggerDelay = true;
+                Invoke(nameof(DaggerDelay),2f);
 
             }
         }
@@ -330,6 +345,28 @@ public class Player : NetworkBehaviour
         }
     }
 
+    
+
+    private void DaggerDelay()
+    {
+        _isDaggerDelay=false;
+    }
+    
+    private void PoisonDelay()
+    {
+        _isPoisonDelay=false;
+    }
+    
+    private void DashDelay()
+    {
+        _isDashDelay=false;
+    }
+    
+    private void BombDelay()
+    {
+        _isBombDelay=false;
+    }
+
     private void unStop()
     {
         transform.position = new Vector3(0, 0, 0);
@@ -366,11 +403,13 @@ public class Player : NetworkBehaviour
             Vector2 prevVec = rb.velocity;
             rb.AddForce(prevVec.normalized * DashSpeed, ForceMode2D.Impulse);
         }
-        else if(!isDashing && !isKnocked&& movement.magnitude!=0)
+        else if(!isDashing && !isKnocked&& movement.magnitude!=0&& !_isDashDelay)
         {
             _animator.SetBool("Move",true);
             SetMoveClientRpc(true);
             rb.velocity = movement * moveSpeed;
+            _isDashDelay = true;
+            Invoke(nameof(DashDelay),1);
         }
         else
         {
@@ -408,9 +447,11 @@ public class Player : NetworkBehaviour
     
     private void Attack()
     {
-        if (Input.GetKeyDown("i"))
+        if (Input.GetKeyDown("i")&&!_isBombDelay)
         {
             InstantiateObjsServerRpc(new Vector3(transform.position.x, transform.position.y));
+            _isBombDelay = true;
+            Invoke(nameof(BombDelay),3f);
         }
     }
 
