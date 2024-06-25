@@ -65,20 +65,6 @@ public class Player : NetworkBehaviour
             if (IsOwner)
             {
                 SetScoreServerRpc(value);
-                if (value == 100)
-                {
-                    if (_respawnManager.isDone.Value == false)
-                    {
-                        if (IsHost)
-                        {
-                            _respawnManager.isBlueWon.Value = true;
-                        }
-                        else
-                        {
-                            _respawnManager.isBlueWon.Value = false;
-                        }
-                    }
-                }
             }
         }
     }
@@ -202,6 +188,21 @@ public class Player : NetworkBehaviour
     private void Update()
     {
         Debug.Log(isKnocked);
+        
+        if (_score >= 100)
+        {
+            if (_respawnManager.isDone.Value == false)
+            {
+                if (IsHost)
+                {
+                    _respawnManager.isBlueWon.Value = true;
+                }
+                else
+                {
+                    _respawnManager.isBlueWon.Value = false;
+                }
+            }
+        }
         if (Hp <= 0)
         {
             _respawnManager.RespawnCharacterServerRpc();
