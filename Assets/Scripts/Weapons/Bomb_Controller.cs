@@ -9,8 +9,8 @@ public class Bomb_Controller : NetworkBehaviour
     private CircleCollider2D _circleCollider;
     public NetworkObject Effect;
 
-    public int Explode_range = 10;
-    public int damage = 10;
+    public int Explode_range = 2;
+    public int damage = 20;
 
     private void Awake()
     {
