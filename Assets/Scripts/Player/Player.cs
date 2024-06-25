@@ -190,7 +190,6 @@ public class Player : NetworkBehaviour
             {
                 
                 ProgressBar = networkObject.gameObject;
-                Debug.Log(ProgressBar.transform.childCount);
                 ProgressBar.transform.GetChild(1).
                     transform.GetChild(0).
                     GetComponent<Image>().color = OwnerClientId == 0 ? Color.red : Color.blue;
@@ -201,13 +200,10 @@ public class Player : NetworkBehaviour
     
     private void Update()
     {
-        Debug.Log(isKnocked);
-        Debug.Log(_score);
         if (_score >= 100)
         {
             if (_respawnManager.isDone.Value == false)
             {
-                Debug.Log(_respawnManager.isDone.Value );
                 if (IsHost)
                 {
                     _respawnManager.isDone.Value = true;
@@ -296,11 +292,7 @@ public class Player : NetworkBehaviour
         if (isDashing&& prevDashPassed==0)
         {
             Vector2 prevVec = rb.velocity;
-            //rb.velocity = movement.normalized * DashSpeed;
-            //Debug.Log(prevVec.normalized * DashSpeed);
             rb.AddForce(prevVec.normalized * DashSpeed, ForceMode2D.Impulse);
-            //isDashing = false;
-            
         }
         else if(!isDashing && !isKnocked&& movement.magnitude!=0)
         {
@@ -375,7 +367,6 @@ public class Player : NetworkBehaviour
 
     private void MakeIsKnockedFalse()
     {
-        //Debug.Log("sadf");
         isKnocked = false;
 
     }
