@@ -11,6 +11,8 @@ public class Player : NetworkBehaviour
     private SpriteRenderer _spriteRenderer;
     private GameManager _respawnManager;
     
+    private Animator _animator;
+    
     [Header("Player Default Setting")]
     public float _hp = 100;
     public float moveSpeed = 5f;
@@ -49,6 +51,7 @@ public class Player : NetworkBehaviour
     [SerializeField] private float DashCoolDown = 1f;
     private bool isDashing = false;
     private float prevDashPassed = 0f;
+    private bool isPushing = false;
     
     [Header("Scoring System")]
     public float _score=0;
@@ -152,6 +155,8 @@ public class Player : NetworkBehaviour
         rb = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _respawnManager = FindObjectOfType<GameManager>();
+        //_respawnManager = FindObjectOfType<RespawnManager>();
+        _animator = GetComponent<Animator>();
     
         if (IsOwner)
         {
@@ -221,19 +226,30 @@ public class Player : NetworkBehaviour
         {
             Attack();
             HandleCharging();
-            if (Input.GetKeyDown("o"))
+            if (Input.GetKeyDown("o")&&!isPushing)
             {
                 foreach (var a in GameObject.FindGameObjectsWithTag("Player"))
                 {
                     if (a.GetHashCode() != gameObject.GetHashCode())
                     {
+                        isPushing = true;
                         Vector3 dir = a.transform.position - gameObject.transform.position;
-                        a.GetComponent<Player>().DamagedServerRpc(dir, 1f);
+                        if (dir.magnitude>2) continue;
+                        
+                        a.GetComponent<Player>().DamagedServerRpc(dir.normalized, 1f);
                         a.GetComponent<Player>().isKnocked = true;
+                        
+                        Invoke("SetFalseIsPushing",1);
+                        break;
                     }
                 }
             }
         }
+    }
+
+    private void SetFalseIsPushing()
+    {
+        isPushing = false;
     }
 
     private void HandleCharging()
@@ -267,9 +283,29 @@ public class Player : NetworkBehaviour
         }
         else if(!isDashing && !isKnocked&& movement.magnitude!=0)
         {
+            _animator.SetBool("Move",true);
+            SetMoveClientRpc(true);
             rb.velocity = movement * moveSpeed;
         }
+        else
+        {
+            _animator.SetBool("Move",false);
+            SetMoveServerRpc(false);
+        }
 
+    }
+    
+    [ServerRpc]
+    private void SetMoveServerRpc(bool t)
+    {
+        _animator.SetBool("Move",t);
+        SetMoveClientRpc(t);
+    }
+    
+    [ClientRpc]
+    private void SetMoveClientRpc(bool t)
+    {
+        _animator.SetBool("Move",t);
     }
     
     private void Attack()

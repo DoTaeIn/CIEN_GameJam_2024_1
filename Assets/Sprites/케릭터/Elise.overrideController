@@ -9,7 +9,7 @@ AnimatorOverrideController:
   m_Name: Elise
   m_Controller: {fileID: 9100000, guid: 9ff74e5dea845c347a59e00dc57d7c2f, type: 2}
   m_Clips:
-  - m_OriginalClip: {fileID: 7400000, guid: d89db049a8eb15e468f15e44fa0d7b78, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: f9d95d1edbc39dd40bb29a300300f9b3, type: 2}
   - m_OriginalClip: {fileID: 7400000, guid: 97328540d22d13f44b106206dd907efb, type: 2}
-    m_OverrideClip: {fileID: 7400000, guid: c201502d940d3d44a96b1798a523f9b0, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 458f7c35a0e0bc342b46cddaaa7af679, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: d89db049a8eb15e468f15e44fa0d7b78, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: a6f2f36bf4eef8a4ca66855797c90f0c, type: 2}
