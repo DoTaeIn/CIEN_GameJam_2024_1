@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.UI;
@@ -13,6 +15,7 @@ public class Player : NetworkBehaviour
     private GameManager _respawnManager;
     
     private Animator _animator;
+    [SerializeField]private Animator Attack_Animtor;
     
     [Header("Player Default Setting")]
     public float _hp = 100;
@@ -73,7 +76,9 @@ public class Player : NetworkBehaviour
         }
     }
 
-    [Header("Knokback System")] public bool isKnocked = false; 
+    [Header("Knokback System")] public bool isKnocked = false;
+
+    [Header("Weapons")] private GameObject[] Weapons;
     
     [ServerRpc]
     private void SetHpServerRpc(float hp)
@@ -115,36 +120,6 @@ public class Player : NetworkBehaviour
             Score += Time.deltaTime;
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            if (Input.GetKeyDown("h"))
-            {
-                Transform target = other.gameObject.transform;
-                Vector3 interV = target.position - transform.position;
-                if (interV.magnitude <= radius)
-                {
-                    // '타겟-나 벡터'와 '내 정면 벡터'를 내적
-                    float dot = Vector3.Dot(interV.normalized, transform.forward);
-                    // 두 벡터 모두 단위 벡터이므로 내적 결과에 cos의 역을 취해서 theta를 구함
-                    float theta = Mathf.Acos(dot);
-                    // angleRange와 비교하기 위해 degree로 변환
-                    float degree = Mathf.Rad2Deg * theta;
-
-                    // 시야각 판별
-                    if (degree <= angle / 2f)
-                        isCollision = true;
-                    else
-                        isCollision = false;
-
-                }
-                else
-                    isCollision = false;
-            }
-        }
-        
-    }
 
     private void OnCollisionEnter2D(Collision2D other)
     {
@@ -161,6 +136,7 @@ public class Player : NetworkBehaviour
         _respawnManager = FindObjectOfType<GameManager>();
         //_respawnManager = FindObjectOfType<RespawnManager>();
         _animator = GetComponent<Animator>();
+
     
         if (IsOwner)
         {
@@ -203,6 +179,72 @@ public class Player : NetworkBehaviour
     
     private void Update()
     {
+        foreach (var VARIABLE in GameObject.FindGameObjectsWithTag("Player"))
+        {
+            
+            if (!VARIABLE.GetComponent<NetworkObject>().IsOwner)
+            {
+                Debug.Log(VARIABLE.name);
+                Transform target = VARIABLE.gameObject.transform;
+                
+                Vector3 interV = target.position - transform.position;
+                if (interV.magnitude <= radius)
+                {
+                    Debug.Log("test");
+                    // '타겟-나 벡터'와 '내 정면 벡터'를 내적
+                    float dot = Vector3.Dot(rb.velocity.normalized, interV.normalized);
+                    //Debug.Log("dot"+dot);
+                    // 두 벡터 모두 단위 벡터이므로 내적 결과에 cos의 역을 취해서 theta를 구함
+                    float theta = Mathf.Acos(dot);
+                    //Debug.Log("theta: "+theta);
+                    // angleRange와 비교하기 위해 degree로 변환
+                    float degree = Mathf.Rad2Deg * theta;
+                    //Debug.Log("degree: "+degree);
+
+                    // 시야각 판별
+                    if (degree <= angle / 2f)
+                    {
+                        Debug.Log("Final");
+                        isCollision = true;
+                    }
+                       
+                    else
+                        isCollision = false;
+
+                }
+                else
+                    isCollision = false;
+            }
+        }
+        
+        Debug.Log(isCollision);
+        //Debug.Log(Attack_Animtor.gameObject.name);
+
+        
+            if (Input.GetKeyDown("h"))
+            {
+
+                if (isCollision)
+                {
+                    foreach (var a in GameObject.FindGameObjectsWithTag("Player"))
+                    {
+                        if (a.GetHashCode() != gameObject.GetHashCode())
+                        {
+                            a.GetComponent<Player>()
+                                .DamagedServerRpc((rb.velocity - a.GetComponent<Player>().rb.velocity).normalized, 10);
+                        }
+                    }
+
+                    SetDaggerServerRpc();
+                }
+                else
+                {
+                    SetDaggerServerRpc();
+                }
+
+            }
+        
+        
         if (_score >= 100)
         {
             if (_respawnManager.isDone.Value == false)
@@ -218,8 +260,6 @@ public class Player : NetworkBehaviour
                     _respawnManager.isBlueWon.Value = true;
                 }
             }
-            
-            
         }
         if (Hp <= 0)
         {
@@ -324,6 +364,19 @@ public class Player : NetworkBehaviour
         _animator.SetBool("Move",t);
     }
     
+    [ServerRpc(RequireOwnership = false)]
+    private void SetDaggerServerRpc()
+    {
+        Attack_Animtor.SetTrigger("Attack");
+        SetDaggerClientRpc();
+    }
+    
+    [ClientRpc]
+    private void SetDaggerClientRpc()
+    {
+        Attack_Animtor.SetTrigger("Attack");
+    }
+    
     private void Attack()
     {
         if (Input.GetKeyDown("i"))
@@ -418,12 +471,14 @@ public class Player : NetworkBehaviour
         yield return null;
     }
     
+    
     private void OnDrawGizmos()
     {
         Handles.color = isCollision ? _red : _blue;
         // DrawSolidArc(시작점, 노멀벡터(법선벡터), 그려줄 방향 벡터, 각도, 반지름)
-        Handles.DrawSolidArc(transform.position, Vector3.up, transform.forward, angle / 2, radius);
-        Handles.DrawSolidArc(transform.position, Vector3.up, transform.forward, -angle / 2, radius);
+        Handles.DrawSolidArc(transform.position, Vector3.forward, transform.right, angle / 2, radius);
+        Handles.DrawSolidArc(transform.position, Vector3.forward, transform.right, -angle / 2, radius);
+        Handles.color = Color.white;
+        Handles.DrawLine(transform.position,transform.position+transform.right);
     }
-    
 }
