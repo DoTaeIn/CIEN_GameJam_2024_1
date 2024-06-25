@@ -2846,6 +2846,7 @@ MonoBehaviour:
   playerPrefab: {fileID: 6868934226339377862, guid: d79fb7e3f35e140e8aadcc90a4c29277, type: 3}
   _timer: {fileID: 0}
   ProgressBarGroup: {fileID: 1956370004}
+  Target: {fileID: 1962175087}
 --- !u!4 &1390433796
 Transform:
   m_ObjectHideFlags: 0
@@ -4010,6 +4011,7 @@ GameObject:
   - component: {fileID: 1962175088}
   - component: {fileID: 1962175090}
   - component: {fileID: 1962175091}
+  - component: {fileID: 1962175094}
   - component: {fileID: 1962175092}
   - component: {fileID: 1962175093}
   m_Layer: 0
@@ -4018,7 +4020,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1962175088
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4194,6 +4196,33 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1962175094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1962175087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ca22fc970f2d0e4996d41e831d4b3ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <IsLocalPlayer>k__BackingField: 0
+  <IsOwner>k__BackingField: 0
+  <IsServer>k__BackingField: 0
+  <ServerIsHost>k__BackingField: 0
+  <IsClient>k__BackingField: 0
+  <IsHost>k__BackingField: 0
+  <IsOwnedByServer>k__BackingField: 0
+  <IsSpawned>k__BackingField: 0
+  m_NetworkObject: {fileID: 0}
+  <NetworkObjectId>k__BackingField: 0
+  <NetworkBehaviourId>k__BackingField: 0
+  NetworkBehaviourIdCache: 0
+  <OwnerClientId>k__BackingField: 0
+  m_VarInit: 0
+  <m_TargetIdBeingSynchronized>k__BackingField: 0
 --- !u!1 &1984115300
 GameObject:
   m_ObjectHideFlags: 0
