@@ -179,7 +179,6 @@ public class Player : NetworkBehaviour
         {
             foreach (var networkObject in RelayManager.Instance.ProgressBarGroup.GetComponentsInChildren<NetworkObject>())
             {
-                Debug.Log("asdf");
                 if (networkObject.OwnerClientId == OwnerClientId)
                     ProgressBar = networkObject.gameObject;
             }
