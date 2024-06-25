@@ -10,6 +10,18 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private GameObject Player_Prefab;
     public NetworkVariable<bool> isDone = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public NetworkVariable<bool> isBlueWon = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ChangeIsBlueWinServerRpc(bool i)
+    {
+        isBlueWon.Value = i;
+    }
+    
+    [ServerRpc(RequireOwnership = false)]
+    public void ChangeIsDoneeWinServerRpc(bool i)
+    {
+        isDone.Value = i;
+    }
     
     [Header("Skill CoolDown System")] 
     [SerializeField]private Image dagger;
