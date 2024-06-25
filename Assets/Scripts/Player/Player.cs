@@ -615,7 +615,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void UpdateWeaponRotationClientRpc(Quaternion rotation)
     {
-        if (!IsOwner)
+        //if (!IsOwner)
             Weapon.gameObject.transform.rotation = rotation;
         
     }
