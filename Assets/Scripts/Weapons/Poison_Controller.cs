@@ -10,7 +10,7 @@ public class Poison_Controller : NetworkBehaviour
     public NetworkObject Effect;
 
     public int Explode_range = 10;
-    public int damage = 5;
+    public int damage = 1;
 
     private void Awake()
     {
@@ -21,7 +21,7 @@ public class Poison_Controller : NetworkBehaviour
     private void Start()
     {
         //_circleCollider.enabled = false;
-        _circleCollider.radius = Explode_range;
+        //_circleCollider.radius = Explode_range;
         Invoke(nameof(Explode), 5);
     }
 
