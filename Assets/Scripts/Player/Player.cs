@@ -248,8 +248,8 @@ public class Player : NetworkBehaviour
             {
                 if (!VARIABLE.GetComponent<NetworkObject>().IsOwner)
                 {
-                    VARIABLE.GetComponent<Player>().theWorld();
-                    makeItStopServerRpc(true);
+                    VARIABLE.GetComponent<Player>().theWorldServerRpc();
+                    //makeItStopServerRpc(true);
                 }
             }
         }
@@ -626,33 +626,26 @@ public class Player : NetworkBehaviour
         yield return null;
     }
 
-    public void theWorld()
+    [ServerRpc(RequireOwnership = false)]
+    public void theWorldServerRpc()
     {
-        isStoped = true;
-        Invoke("reverseTheWorld", 3);
-        
+            isStoped = true;
+            Invoke("reverseTheWorld", 3);
+            theWorldClientRpc();
+    }
+    [ClientRpc]
+    public void theWorldClientRpc()
+    {
+        //if (IsOwner)
+        {
+            isStoped = true;
+            Invoke("reverseTheWorld", 3);
+            
+        } 
     }
 
     private void reverseTheWorld()
     {
         isStoped = false;
-        makeItStopServerRpc(false);
-    }
-
-
-    [ServerRpc(RequireOwnership = false)]
-    private void makeItStopServerRpc(bool IsStop)
-    {
-        makeItStopClientRpc(IsStop);
-    }
-    
-    [ClientRpc]
-    private void makeItStopClientRpc(bool IsStop)
-    {
-        if(IsOwner)
-        {
-            isStoped = IsStop;
-        }
-        
     }
 }
