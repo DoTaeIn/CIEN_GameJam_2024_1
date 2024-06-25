@@ -181,8 +181,10 @@ MonoBehaviour:
   Rabbit: {fileID: 9100000, guid: 9ff74e5dea845c347a59e00dc57d7c2f, type: 2}
   Elise: {fileID: 22100000, guid: 7a8ddd901b693c44a8683735c055bf2b, type: 2}
   Attack_Animtor: {fileID: 3806378388892978630}
+  isStoped: 0
   _hp: 100
   moveSpeed: 5
+  Weapon: {fileID: 7834870739630387038}
   ProgressBarPref: {fileID: 6128503196257499576, guid: c99408748d11b2e478f84d09f122369d, type: 3}
   ProgressBar: {fileID: 0}
   Bomb_Prefab: {fileID: 6946271667589325436, guid: e19e5fab527684957a531a7e3e861567, type: 3}
