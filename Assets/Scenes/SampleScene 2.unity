@@ -2670,7 +2670,7 @@ GameObject:
   - component: {fileID: 1417502804}
   - component: {fileID: 1417502805}
   m_Layer: 0
-  m_Name: RespawnManager
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2709,6 +2709,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27565b47fbea44397954cf801e21affc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Player_Prefab: {fileID: 0}
+  isDone:
+    m_InternalValue: 0
+  isBlueWon:
+    m_InternalValue: 0
 --- !u!4 &1417502806
 Transform:
   m_ObjectHideFlags: 0
