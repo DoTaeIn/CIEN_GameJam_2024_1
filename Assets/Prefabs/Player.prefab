@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4239519591186424988}
   - component: {fileID: 7133564977493758028}
   - component: {fileID: 6164159011184426719}
+  - component: {fileID: 8292332781489949340}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -100,7 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 947446537
+  GlobalObjectIdHash: 738025563
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -123,12 +124,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hp: 100
   moveSpeed: 5
-  chargingMoveSpeed: 2
   ProgressBarPref: {fileID: 6128503196257499576, guid: c99408748d11b2e478f84d09f122369d, type: 3}
   ProgressBar: {fileID: 0}
   Bomb_Prefab: {fileID: 6946271667589325436, guid: e19e5fab527684957a531a7e3e861567, type: 3}
-  ChargeShotPower: 50
-  maxChargeTime: 1.5
+  DashSpeed: 10
+  DashDuration: 0.2
+  DashCoolDown: 1
   _score: 0
 --- !u!50 &7133564977493758028
 Rigidbody2D:
@@ -202,3 +203,38 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!58 &8292332781489949340
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6868934226339377862}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 3

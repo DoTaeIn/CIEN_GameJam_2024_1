@@ -1,10 +1,7 @@
-using System;
 using System.Collections;
-using Unity.Mathematics;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEditor;
 using Slider = UnityEngine.UI.Slider;
 
 public class Player : NetworkBehaviour
@@ -14,6 +11,13 @@ public class Player : NetworkBehaviour
     [Header("Player Default Setting")]
     public float _hp = 100;
     public float moveSpeed = 5f;
+    
+    [Header(("Radius Collision Detection"))]
+    float angle = 30f;
+    private float radius = 3f;
+    bool isCollision = false;
+    Color _blue = new Color(0f, 0f, 1f, 0.2f);
+    Color _red = new Color(1f, 0f, 0f, 0.2f);
     
     private Rigidbody2D rb;
     public GameObject ProgressBarPref;
@@ -100,6 +104,34 @@ public class Player : NetworkBehaviour
     {
         if(IsOwner)
             Score += Time.deltaTime;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            Transform target = other.gameObject.transform;
+            Vector3 interV = target.position - transform.position;
+            if (interV.magnitude <= radius)
+            {
+                // '타겟-나 벡터'와 '내 정면 벡터'를 내적
+                float dot = Vector3.Dot(interV.normalized, transform.forward);
+                // 두 벡터 모두 단위 벡터이므로 내적 결과에 cos의 역을 취해서 theta를 구함
+                float theta = Mathf.Acos(dot);
+                // angleRange와 비교하기 위해 degree로 변환
+                float degree = Mathf.Rad2Deg * theta;
+
+                // 시야각 판별
+                if (degree <= angle / 2f)
+                    isCollision = true;
+                else
+                    isCollision = false;
+
+            }
+            else
+                isCollision = false;
+        }
+        
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -275,6 +307,14 @@ public class Player : NetworkBehaviour
             }
         }
         yield return null;
+    }
+    
+    private void OnDrawGizmos()
+    {
+        Handles.color = isCollision ? _red : _blue;
+        // DrawSolidArc(시작점, 노멀벡터(법선벡터), 그려줄 방향 벡터, 각도, 반지름)
+        Handles.DrawSolidArc(transform.position, Vector3.up, transform.forward, angle / 2, radius);
+        Handles.DrawSolidArc(transform.position, Vector3.up, transform.forward, -angle / 2, radius);
     }
     
 }
