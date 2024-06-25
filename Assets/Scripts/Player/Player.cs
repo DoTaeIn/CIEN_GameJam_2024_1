@@ -201,20 +201,17 @@ public class Player : NetworkBehaviour
     {
         if (Input.GetKeyDown("i"))
         {
-            GameObject bomb = Instantiate(Bomb_Prefab, transform.position, quaternion.identity);
-            bomb.GetComponent<Bomb_Controller>().Invoke("Explode", 5);
+            InstantiateObjsServerRpc(new Vector3(transform.position.x, transform.position.y));
         }
     }
 
 
     [ServerRpc(RequireOwnership = false)]
-    public void InstantiateObjsServerRpc(Vector3 transform, Quaternion quaternion)
+    public void InstantiateObjsServerRpc(Vector3 transform)
     {
         if (NetworkManager.Singleton != null && Bomb_Prefab != null)
         {
-            
-            NetworkObject gameobject = NetworkManager.SpawnManager.InstantiateAndSpawn(Bomb_Prefab.GetComponent<NetworkObject>(), OwnerClientId, false, false, false, transform, quaternion);
-            
+            NetworkObject gameobject = NetworkManager.SpawnManager.InstantiateAndSpawn(Bomb_Prefab.GetComponent<NetworkObject>(), OwnerClientId, false, false, false, transform);
         }
     }
     

@@ -15,7 +15,12 @@ public class Bomb_Controller : MonoBehaviour
 
         _circleCollider = GetComponent<CircleCollider2D>();
     }
-    
+
+    private void Start()
+    {
+        Invoke("Explode", 5);
+    }
+
     public void Explode()
     {
         _circleCollider.radius = Explode_range;
