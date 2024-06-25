@@ -26,6 +26,8 @@ public class RelayManager : NetworkBehaviour
     private const int MaxPlayers = 2;
     public static RelayManager Instance;
 
+    public GameObject Target;
+
     private async void Awake()
     {
         transport = FindObjectOfType<UnityTransport>();
@@ -87,7 +89,20 @@ public class RelayManager : NetworkBehaviour
         if (NetworkManager.Singleton.IsServer && clientId != NetworkManager.Singleton.LocalClientId)
         {
             //SpawnPlayer(clientId);
+            
+            if (NetworkManager.Singleton.ConnectedClientsList.Count == 2)
+            {
+                SetTargetActiveClientRpc();
+            }
         }
+
+        
+    }
+
+    [ClientRpc]
+    private void SetTargetActiveClientRpc()
+    {
+        Target.SetActive(true);
     }
     /*
     private void SpawnPlayer(ulong clientId)
