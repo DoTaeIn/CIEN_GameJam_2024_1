@@ -7,7 +7,7 @@ using Slider = UnityEngine.UI.Slider;
 public class Player : NetworkBehaviour
 {
     private SpriteRenderer _spriteRenderer;
-    private RespawnManager _respawnManager;
+    private GameManager _respawnManager;
     
     [Header("Player Default Setting")]
     public float _hp = 100;
@@ -63,6 +63,20 @@ public class Player : NetworkBehaviour
             if (IsOwner)
             {
                 SetScoreServerRpc(value);
+                if (value == 100)
+                {
+                    if (_respawnManager.isDone.Value == false)
+                    {
+                        if (IsHost)
+                        {
+                            _respawnManager.isBlueWon.Value = true;
+                        }
+                        else
+                        {
+                            _respawnManager.isBlueWon.Value = false;
+                        }
+                    }
+                }
             }
         }
     }
@@ -149,7 +163,7 @@ public class Player : NetworkBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        _respawnManager = FindObjectOfType<RespawnManager>();
+        _respawnManager = FindObjectOfType<GameManager>();
     
         if (IsOwner)
         {
