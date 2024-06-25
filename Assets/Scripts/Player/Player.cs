@@ -32,6 +32,7 @@ public class Player : NetworkBehaviour
     Color _red = new Color(1f, 0f, 0f, 0.2f);
 
     [SerializeField] private GameObject Weapon;
+    [SerializeField] private GameObject Clock;
     
     private Rigidbody2D rb;
     public GameObject ProgressBarPref;
@@ -59,6 +60,7 @@ public class Player : NetworkBehaviour
     [SerializeField] private GameObject Bomb_Prefab;
     [SerializeField] private GameObject Poison_Prefab;
     private bool _isDaggerDelay, _isPoisonDelay, _isBombDelay,_isDashDelay;
+    
     [Header("Charging & Dash Settings")]
     [SerializeField] private float DashSpeed = 10f;
     [SerializeField] private float DashDuration = 0.2f;
@@ -218,6 +220,11 @@ public class Player : NetworkBehaviour
     }
     private void Update()
     {
+        if(isStoped)
+            Clock.SetActive(true);
+        else
+            Clock.SetActive(false);
+        
         if (OwnerClientId == 0 && RabbitHealthBar == null)
         {
             RabbitHealthBar=RelayManager.Instance.HealthBarGroup.GetComponentsInChildren<Image>()[0].gameObject;
@@ -636,14 +643,16 @@ public class Player : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void makeItStopServerRpc(bool IsStop)
     {
-        isStoped = IsStop;
         makeItStopClientRpc(isStoped);
     }
     
-    [ClientRpc(RequireOwnership = false)]
+    [ClientRpc]
     private void makeItStopClientRpc(bool IsStop)
     {
-        isStoped = IsStop;
+        if(IsOwner)
+        {
+            isStoped = IsStop;
+        }
         
     }
 }
