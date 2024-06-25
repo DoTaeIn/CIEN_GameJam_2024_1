@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Bomb_Controller : MonoBehaviour
+public class Bomb_Controller : NetworkBehaviour
 {
     private CircleCollider2D _circleCollider;
+    public NetworkObject Effect;
 
     public int Explode_range = 10;
     public int damage = 10;
@@ -19,14 +21,28 @@ public class Bomb_Controller : MonoBehaviour
     private void Start()
     {
         _circleCollider.enabled = false;
-        Invoke("Explode", 5);
+        Invoke(nameof(Explode), 5);
     }
 
     public void Explode()
     {
         _circleCollider.enabled = true;
         _circleCollider.radius = Explode_range;
-        Destroy(this.gameObject, 1f);
+        EffectServerRpc();
+        Invoke(nameof(DestroyServerRpc),1);
+    }
+    
+    [ServerRpc]
+    private void EffectServerRpc()
+    {
+        NetworkManager.Singleton.SpawnManager.InstantiateAndSpawn(Effect).transform.position=transform.position;
+        
+    }
+
+    [ServerRpc]
+    private void DestroyServerRpc()
+    {
+        GetComponent<NetworkObject>().Despawn(this.gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D other)

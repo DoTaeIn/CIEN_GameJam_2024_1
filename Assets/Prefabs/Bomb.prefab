@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 1822567492825094994}
   - component: {fileID: 2728966489804139541}
   - component: {fileID: 7875672999834440898}
-  - component: {fileID: 5444826432335748596}
   - component: {fileID: 4199475638288346310}
+  - component: {fileID: 5444826432335748596}
   - component: {fileID: 1006442006334601235}
   m_Layer: 0
   m_Name: Bomb
@@ -123,20 +123,6 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
---- !u!114 &5444826432335748596
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6946271667589325436}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da0b407a10c1047e890a04689151ca41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Explode_range: 10
-  damage: 10
 --- !u!114 &4199475638288346310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149,7 +135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1030913406
+  GlobalObjectIdHash: 863598380
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -158,6 +144,21 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &5444826432335748596
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6946271667589325436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da0b407a10c1047e890a04689151ca41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Effect: {fileID: 7882614690385981158, guid: b8fbc46f1a887ec47b411e027ea8624a, type: 3}
+  Explode_range: 10
+  damage: 10
 --- !u!114 &1006442006334601235
 MonoBehaviour:
   m_ObjectHideFlags: 0
