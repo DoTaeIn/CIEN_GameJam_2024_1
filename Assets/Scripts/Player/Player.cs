@@ -212,15 +212,10 @@ public class Player : NetworkBehaviour
     {
         if (NetworkManager.Singleton != null && Bomb_Prefab != null)
         {
-            GameObject gameobject = Instantiate(Bomb_Prefab, transform, quaternion);
-            NetworkObject networkObject = gameObject.GetComponent<NetworkObject>();
-            if (networkObject != null)
-            {
-                networkObject.Spawn(true);
-            }
+            
+            NetworkObject gameobject = NetworkManager.SpawnManager.InstantiateAndSpawn(Bomb_Prefab.GetComponent<NetworkObject>(), OwnerClientId, false, false, false, transform, quaternion);
+            
         }
-        
-        
     }
     
 
