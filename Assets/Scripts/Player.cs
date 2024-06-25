@@ -8,12 +8,15 @@ using Slider = UnityEngine.UI.Slider;
 
 public class Player : NetworkBehaviour
 {
+    [Header("Player Default Setting")]
+    public float _hp = 100;
     public float moveSpeed = 5f;
+    public float chargingMoveSpeed = 2f; // 차징 중 이동 속도
+    
     private Rigidbody2D rb;
     public GameObject ProgressBarPref;
     public GameObject ProgressBar;
 
-    public float _hp=100;
     public float Hp
     {
         get
@@ -27,6 +30,18 @@ public class Player : NetworkBehaviour
         }
     }
 
+    
+    
+    [Header("Weapon Prefabs")]
+    [SerializeField] private GameObject Bomb_Prefab;
+    
+    [Header("Charging Settings")]
+    [SerializeField] private float ChargeShotPower = 50f;
+    [SerializeField] private float maxChargeTime = 1.5f; 
+    private float chargeTime = 0f;
+    private bool isCharging = false; 
+    private bool isFullCharge = false;
+    
     [ServerRpc]
     private void SetHpServerRpc(float hp)
     {
@@ -89,9 +104,9 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
-        //Debug.Log(OwnerClientId);
         rb = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
+    }
         if (IsOwner)
         {
             SpawnProgressBarServerRpc(OwnerClientId);
@@ -138,56 +153,84 @@ public class Player : NetworkBehaviour
         }
         if (IsOwner)
         {
-            //Move();
+            Attack();
+            HandleCharging();
             if (Input.GetKeyDown("o"))
             {
                 foreach (var a in GameObject.FindGameObjectsWithTag("Player"))
                 {
                     if (a.GetHashCode() != gameObject.GetHashCode())
                     {
-                        //Debug.Log("test`1");
                         Vector3 dir = a.transform.position - gameObject.transform.position;
                         a.GetComponent<Player>().DamagedServerRpc(dir, 1f);
-                       
                     }
                 }
             }
         }
+    }
 
-        
+    private void HandleCharging()
+    {
+        if (Input.GetKeyDown("k"))
+        {
+            StartCharging();
+        }
+
+        if (Input.GetKeyUp("k"))
+        {
+            ReleaseCharge();
+        }
+
+        if (isCharging)
+        {
+            chargeTime += Time.deltaTime;
+            if (chargeTime >= maxChargeTime)
+            {
+                isFullCharge = true;
+            }
+        }
     }
 
     private void Move()
     {
+        float speed = isCharging ? chargingMoveSpeed : moveSpeed;
         float moveX = Input.GetAxis("Horizontal");
         float moveY = Input.GetAxis("Vertical");
 
-        Vector3 move = new Vector3(moveX, moveY, 0) * moveSpeed;
-        if (move!=Vector3.zero)
+        Vector3 move = new Vector3(moveX, moveY, 0) * speed;
+        if (move != Vector3.zero)
         {
             rb.velocity = new Vector3(move.x, move.y, 0);
         }
     }
     
+
+    private void Attack()
+    {
+        if (Input.GetKeyDown("i"))
+        {
+            GameObject bomb = Instantiate(Bomb_Prefab);
+            bomb.GetComponent<Bomb_Controller>().Invoke("Explode", 5);
+        }
+    }
+
     [ServerRpc(RequireOwnership = false)]
     public void DamagedServerRpc(Vector3 dir, float damage)
     {
-        DamagedClientRpc(dir, 1f);
+        DamagedClientRpc(dir, damage);
         gameObject.layer = 1;
         _spriteRenderer.color = new Color(233, 233, 233, 250);
         StartCoroutine("BeVulnerable", 1);
     }
 
-    
     [ClientRpc]
     public void DamagedClientRpc(Vector3 dir, float damage)
     {
         if (IsOwner)
         {
-            rb.AddForce(dir,ForceMode2D.Impulse);
+            rb.AddForce(dir * 10, ForceMode2D.Impulse);
             Hp -= damage;
-            UpdatePositionServerRpc(rb.position,rb.velocity);
-            
+            UpdatePositionServerRpc(rb.position, rb.velocity);
         }
     }
 
@@ -201,21 +244,15 @@ public class Player : NetworkBehaviour
     }
 
     [ServerRpc]
-    private void UpdatePositionServerRpc(Vector3 position,Vector3 velocity)
+    private void UpdatePositionServerRpc(Vector3 position, Vector3 velocity)
     {
-        
-            rb.position = position;
-            rb.velocity = velocity;
-            //Debug.Log(position);Debug.Log(velocity);
-            UpdatePositionClientRpc(position,velocity);
-        
-        
-        
-        
+        rb.position = position;
+        rb.velocity = velocity;
+        UpdatePositionClientRpc(position, velocity);
     }
 
     [ClientRpc]
-    private void UpdatePositionClientRpc(Vector3 position,Vector3 velocity)
+    private void UpdatePositionClientRpc(Vector3 position, Vector3 velocity)
     {
         if (!IsOwner)
         {
@@ -224,9 +261,6 @@ public class Player : NetworkBehaviour
         }
     }
 
-
-    
-    
     IEnumerator BeVulnerable()
     {
         foreach (var a in GameObject.FindGameObjectsWithTag("Player"))
@@ -238,5 +272,41 @@ public class Player : NetworkBehaviour
             }
         }
         yield return null;
+    }
+    
+    public void StartCharging()
+    {
+        isCharging = true;
+        chargeTime = 0f;
+    }
+
+    public void ReleaseCharge()
+    {
+        isCharging = false;
+        bool isFullyCharged = isFullCharge;
+        isFullCharge = false;
+        chargeTime = 0f;
+
+        if (isFullyCharged)
+        {
+            ChargeShot();
+        }
+        else
+        {
+            ShortDash();
+        }
+    }
+
+    public void ChargeShot()
+    {
+        Vector2 dir = rb.velocity.normalized;
+        rb.AddForce(dir * ChargeShotPower, ForceMode2D.Impulse);
+    }
+
+    public void ShortDash()
+    {
+        Vector2 dir = rb.velocity.normalized;
+        float dashSpeed = 20f;
+        rb.velocity = dir * dashSpeed;
     }
 }
