@@ -643,7 +643,7 @@ public class Player : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void makeItStopServerRpc(bool IsStop)
     {
-        makeItStopClientRpc(isStoped);
+        makeItStopClientRpc(IsStop);
     }
     
     [ClientRpc]
