@@ -261,7 +261,7 @@ public class Player : NetworkBehaviour
             float angle = Mathf.Atan2(velo.y, velo.x) * Mathf.Rad2Deg;
 
             // 객체의 회전을 설정합니다.
-            Quaternion newFace = Quaternion.Euler(new Vector3(0, 0, angle + 225f));
+            Quaternion newFace = Quaternion.Euler(new Vector3(0, 0, angle));
 
             UpdateWeaponRotationServerRpc(newFace);
         }
