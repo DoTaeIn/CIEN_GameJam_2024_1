@@ -102,7 +102,7 @@ public class Player : NetworkBehaviour
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        if(IsOwner)
+        if(IsOwner&& other.tag=="Target")
             Score += Time.deltaTime;
     }
 
@@ -179,6 +179,7 @@ public class Player : NetworkBehaviour
         {
             foreach (var networkObject in RelayManager.Instance.ProgressBarGroup.GetComponentsInChildren<NetworkObject>())
             {
+                Debug.Log("asdf");
                 if (networkObject.OwnerClientId == OwnerClientId)
                     ProgressBar = networkObject.gameObject;
             }
@@ -203,10 +204,15 @@ public class Player : NetworkBehaviour
 
     private void HandleCharging()
     {
-        if (Input.GetKeyDown("k"))
+        if (Input.GetKeyDown("k")&&!isDashing)
         {
             isDashing = true;
-            prevDashPassed += Time.deltaTime;
+        }else
+        
+        if (prevDashPassed> DashDuration)
+        {
+            prevDashPassed = 0;
+            isDashing = false;
         }
 
     }
@@ -216,14 +222,15 @@ public class Player : NetworkBehaviour
 
         Vector2 movement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
-        if (isDashing)
+        if (isDashing&& prevDashPassed==0)
         {
             Vector2 prevVec = rb.velocity;
-            rb.velocity = Vector2.zero;
-            rb.AddForce(prevVec * DashSpeed, ForceMode2D.Impulse);
-            isDashing = false;
-        }
-        else
+            //rb.velocity = movement.normalized * DashSpeed;
+            //Debug.Log(prevVec.normalized * DashSpeed);
+            rb.AddForce(prevVec.normalized * DashSpeed, ForceMode2D.Impulse);
+            //isDashing = false;
+            
+        }if(!isDashing)
         {
             rb.velocity = movement * moveSpeed;
         }
@@ -275,6 +282,10 @@ public class Player : NetworkBehaviour
         {
             Move();
             UpdatePositionServerRpc(rb.position, rb.velocity);
+        }
+        if (isDashing)
+        {
+            prevDashPassed += Time.deltaTime;
         }
     }
 
