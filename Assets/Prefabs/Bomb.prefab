@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 2728966489804139541}
   - component: {fileID: 7875672999834440898}
   - component: {fileID: 5444826432335748596}
+  - component: {fileID: 4199475638288346310}
+  - component: {fileID: 1006442006334601235}
   m_Layer: 0
   m_Name: Bomb
   m_TagString: Untagged
@@ -134,4 +136,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Explode_range: 10
+  damage: 10
+--- !u!114 &4199475638288346310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6946271667589325436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1030913406
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+--- !u!114 &1006442006334601235
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6946271667589325436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 261a8ba54bb22462a8d7d5f659499548, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   damage: 10
