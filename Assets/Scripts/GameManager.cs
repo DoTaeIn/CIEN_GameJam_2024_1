@@ -52,10 +52,10 @@ public class GameManager : NetworkBehaviour
 
     private void Start()
     {
-        dagger.fillAmount = 1;
-        bomb.fillAmount = 1;
-        time.fillAmount = 1;
-        poison.fillAmount = 1;
+        dagger.fillAmount = 0;
+        bomb.fillAmount = 0;
+        time.fillAmount = 0;
+        poison.fillAmount = 0;
         
     }
 
