@@ -28,7 +28,8 @@ public class Player : NetworkBehaviour
         set
         {
             _hp = value;
-            SetHpServerRpc(value);
+            if(IsOwner)
+                SetHpServerRpc(value);
         }
     }
 
