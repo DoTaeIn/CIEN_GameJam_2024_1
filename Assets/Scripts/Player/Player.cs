@@ -14,7 +14,6 @@ public class Player : NetworkBehaviour
     private Animator _animator;
     [SerializeField]private Animator Attack_Animtor;
     
-    
     public bool isStoped;
     
     [Header("Player Default Setting")]
@@ -56,7 +55,7 @@ public class Player : NetworkBehaviour
     [Header("Weapon Prefabs")]
     [SerializeField] private GameObject Bomb_Prefab;
     [SerializeField] private GameObject Poison_Prefab;
-    private bool _isDaggerDelay, _isPoisonDelay, _isBombDelay,_isDashDelay;
+    private bool _isDaggerDelay, _isPoisonDelay, _isBombDelay,_isDashDelay,_isTimeDelay;
     
     [Header("Charging & Dash Settings")]
     [SerializeField] private float DashSpeed = 10f;
@@ -239,13 +238,15 @@ public class Player : NetworkBehaviour
             _isPoisonDelay = true;
             Invoke(nameof(PoisonDelay),5);
         }
-        if (Input.GetKeyDown("t"))
+        if (Input.GetKeyDown("t")&& !_isTimeDelay)
         {
             foreach (var VARIABLE in GameObject.FindGameObjectsWithTag("Player"))
             {
                 if (!VARIABLE.GetComponent<NetworkObject>().IsOwner)
                 {
                     VARIABLE.GetComponent<Player>().theWorldServerRpc();
+                    _isTimeDelay = true;
+                    Invoke(nameof(TimeDelay),30);
                     //makeItStopServerRpc(true);
                 }
             }
@@ -426,6 +427,11 @@ public class Player : NetworkBehaviour
     private void BombDelay()
     {
         _isBombDelay=false;
+    }
+    
+    private void TimeDelay()
+    {
+        _isTimeDelay=false;
     }
 
     private void unStop()
