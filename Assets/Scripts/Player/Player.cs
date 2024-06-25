@@ -85,6 +85,8 @@ public class Player : NetworkBehaviour
         }
     }
 
+    
+    
     [Header("Knokback System")] public bool isKnocked = false;
 
     [Header("Weapons")] private GameObject[] Weapons;
@@ -217,6 +219,8 @@ public class Player : NetworkBehaviour
     }
     private void Update()
     {
+        
+        
         if(isStoped)
             Clock.SetActive(true);
         else
@@ -645,4 +649,6 @@ public class Player : NetworkBehaviour
     {
         isStoped = false;
     }
+
+    
 }
