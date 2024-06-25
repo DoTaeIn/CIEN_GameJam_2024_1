@@ -119,26 +119,29 @@ public class Player : NetworkBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Transform target = other.gameObject.transform;
-            Vector3 interV = target.position - transform.position;
-            if (interV.magnitude <= radius)
+            if (Input.GetKeyDown("h"))
             {
-                // '타겟-나 벡터'와 '내 정면 벡터'를 내적
-                float dot = Vector3.Dot(interV.normalized, transform.forward);
-                // 두 벡터 모두 단위 벡터이므로 내적 결과에 cos의 역을 취해서 theta를 구함
-                float theta = Mathf.Acos(dot);
-                // angleRange와 비교하기 위해 degree로 변환
-                float degree = Mathf.Rad2Deg * theta;
+                Transform target = other.gameObject.transform;
+                Vector3 interV = target.position - transform.position;
+                if (interV.magnitude <= radius)
+                {
+                    // '타겟-나 벡터'와 '내 정면 벡터'를 내적
+                    float dot = Vector3.Dot(interV.normalized, transform.forward);
+                    // 두 벡터 모두 단위 벡터이므로 내적 결과에 cos의 역을 취해서 theta를 구함
+                    float theta = Mathf.Acos(dot);
+                    // angleRange와 비교하기 위해 degree로 변환
+                    float degree = Mathf.Rad2Deg * theta;
 
-                // 시야각 판별
-                if (degree <= angle / 2f)
-                    isCollision = true;
+                    // 시야각 판별
+                    if (degree <= angle / 2f)
+                        isCollision = true;
+                    else
+                        isCollision = false;
+
+                }
                 else
                     isCollision = false;
-
             }
-            else
-                isCollision = false;
         }
         
     }

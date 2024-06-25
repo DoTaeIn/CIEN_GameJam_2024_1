@@ -9,7 +9,8 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private GameObject Player_Prefab;
     public NetworkVariable<bool> isDone = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public NetworkVariable<bool> isBlueWon = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-   
+
+    [SerializeField] private GameObject[] winScreens;
     
     [ServerRpc(RequireOwnership = false)]
     public void RespawnCharacterServerRpc()
@@ -32,11 +33,26 @@ public class GameManager : NetworkBehaviour
         {
             if (isBlueWon.Value)
             {
-                Debug.Log("Blue Won!");
+                DisplayWinScreen(0);
             }
             else
             {
-                Debug.Log("Red Won!");
+                DisplayWinScreen(1);
+            }
+        }
+    }
+
+    void DisplayWinScreen(int i)
+    {
+        for (int j = 0; j < winScreens.Length; j++)
+        {
+            if (j == i)
+            {
+                winScreens[j].SetActive(true);
+            }
+            else
+            {
+                winScreens[j].SetActive(false);
             }
         }
     }
