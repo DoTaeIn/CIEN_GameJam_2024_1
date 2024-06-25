@@ -7,6 +7,7 @@ using Slider = UnityEngine.UI.Slider;
 public class Player : NetworkBehaviour
 {
     private SpriteRenderer _spriteRenderer;
+    private RespawnManager _respawnManager;
     
     [Header("Player Default Setting")]
     public float _hp = 100;
@@ -65,6 +66,8 @@ public class Player : NetworkBehaviour
             }
         }
     }
+
+    [Header("Knokback System")] public bool isKnocked = false; 
     
     [ServerRpc]
     private void SetHpServerRpc(float hp)
@@ -146,6 +149,7 @@ public class Player : NetworkBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        _respawnManager = FindObjectOfType<RespawnManager>();
     
         if (IsOwner)
         {
@@ -174,6 +178,12 @@ public class Player : NetworkBehaviour
     
     private void Update()
     {
+        Debug.Log(isKnocked);
+        if (Hp <= 0)
+        {
+            _respawnManager.RespawnCharacterServerRpc();
+            Destroy(gameObject);
+        }
         
         if (ProgressBar == null)
         {
@@ -195,6 +205,7 @@ public class Player : NetworkBehaviour
                     {
                         Vector3 dir = a.transform.position - gameObject.transform.position;
                         a.GetComponent<Player>().DamagedServerRpc(dir, 1f);
+                        a.GetComponent<Player>().isKnocked = true;
                     }
                 }
             }
@@ -229,7 +240,8 @@ public class Player : NetworkBehaviour
             rb.AddForce(prevVec.normalized * DashSpeed, ForceMode2D.Impulse);
             //isDashing = false;
             
-        }if(!isDashing)
+        }
+        else if(!isDashing && !isKnocked&& movement.magnitude!=0)
         {
             rb.velocity = movement * moveSpeed;
         }
@@ -259,9 +271,11 @@ public class Player : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void DamagedServerRpc(Vector3 dir, float damage)
     {
+        
         DamagedClientRpc(dir, damage);
         gameObject.layer = 1;
         StartCoroutine("BeVulnerable", 1);
+        Invoke("MakeIsKnockedFalse", 0.3f);
     }
 
     [ClientRpc]
@@ -271,8 +285,18 @@ public class Player : NetworkBehaviour
         {
             rb.AddForce(dir * 10, ForceMode2D.Impulse);
             Hp -= damage;
+            isKnocked = true;
             UpdatePositionServerRpc(rb.position, rb.velocity);
+            Invoke("MakeIsKnockedFalse", 0.3f);
+            
         }
+    }
+
+    private void MakeIsKnockedFalse()
+    {
+        //Debug.Log("sadf");
+        isKnocked = false;
+
     }
 
     private void FixedUpdate()
