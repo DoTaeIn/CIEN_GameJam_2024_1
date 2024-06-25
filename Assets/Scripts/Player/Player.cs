@@ -347,15 +347,15 @@ public class Player : NetworkBehaviour
         {
             if (_respawnManager.isDone.Value == false)
             {
-                if (IsHost)
+                if (OwnerClientId == 0)
                 {
-                    _respawnManager.ChangeIsDoneeWinServerRpc(true);
+                    _respawnManager.ChangeIsDoneServerRpc(true);
                     _respawnManager.ChangeIsBlueWinServerRpc(false);
                 }
                 else
                 {
-                    _respawnManager.ChangeIsDoneeWinServerRpc(true);
-                    _respawnManager.ChangeIsBlueWinServerRpc(false);
+                    _respawnManager.ChangeIsDoneServerRpc(true);
+                    _respawnManager.ChangeIsBlueWinServerRpc(true);
                 }
             }
         }

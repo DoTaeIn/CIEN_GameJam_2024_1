@@ -12,15 +12,15 @@ public class GameManager : NetworkBehaviour
     public NetworkVariable<bool> isBlueWon = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     [ServerRpc(RequireOwnership = false)]
-    public void ChangeIsBlueWinServerRpc(bool i)
+    public void ChangeIsBlueWinServerRpc(bool value)
     {
-        isBlueWon.Value = i;
+        isBlueWon.Value = value;
     }
-    
+
     [ServerRpc(RequireOwnership = false)]
-    public void ChangeIsDoneeWinServerRpc(bool i)
+    public void ChangeIsDoneServerRpc(bool value)
     {
-        isDone.Value = i;
+        isDone.Value = value;
     }
     
     [Header("Skill CoolDown System")] 
