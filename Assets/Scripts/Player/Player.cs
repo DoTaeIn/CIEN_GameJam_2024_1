@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.UI;
 using Slider = UnityEngine.UI.Slider;
 
 public class Player : NetworkBehaviour
@@ -183,10 +184,18 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void SpawnProgressBarClientRpc()
     {
-        foreach (var networkObject in RelayManager.Instance.ProgressBarGroup.GetComponentsInChildren<NetworkObject>())
+        foreach (var networkObject in RelayManager.Instance.ProgressBarGroup.GetComponentsInChildren<Slider>())
         {
-            if (networkObject.OwnerClientId == OwnerClientId)
+            if (networkObject.GetComponent<NetworkObject>().OwnerClientId == OwnerClientId)
+            {
+                
                 ProgressBar = networkObject.gameObject;
+                Debug.Log(ProgressBar.transform.childCount);
+                ProgressBar.transform.GetChild(1).
+                    transform.GetChild(0).
+                    GetComponent<Image>().color = OwnerClientId == 0 ? Color.red : Color.blue;
+                
+            }
         }
     }
     
@@ -216,10 +225,17 @@ public class Player : NetworkBehaviour
         
         if (ProgressBar == null)
         {
-            foreach (var networkObject in RelayManager.Instance.ProgressBarGroup.GetComponentsInChildren<NetworkObject>())
+            foreach (var networkObject in RelayManager.Instance.ProgressBarGroup.GetComponentsInChildren<Slider>())
             {
-                if (networkObject.OwnerClientId == OwnerClientId)
+                if (networkObject.GetComponent<NetworkObject>().OwnerClientId == OwnerClientId)
+                {
                     ProgressBar = networkObject.gameObject;
+                    ProgressBar.transform.GetChild(1).
+                        transform.GetChild(0).
+                        GetComponent<Image>().color = OwnerClientId == 0 ? Color.red : Color.blue;
+                    
+                }
+                    
             }
         }
         if (IsOwner)
