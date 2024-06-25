@@ -157,7 +157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 738025563
+  GlobalObjectIdHash: 947446537
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -181,11 +181,13 @@ MonoBehaviour:
   Rabbit: {fileID: 9100000, guid: 9ff74e5dea845c347a59e00dc57d7c2f, type: 2}
   Elise: {fileID: 22100000, guid: 7a8ddd901b693c44a8683735c055bf2b, type: 2}
   Attack_Animtor: {fileID: 3806378388892978630}
+  isStoped: 0
   _hp: 100
   moveSpeed: 5
   ProgressBarPref: {fileID: 6128503196257499576, guid: c99408748d11b2e478f84d09f122369d, type: 3}
   ProgressBar: {fileID: 0}
   Bomb_Prefab: {fileID: 6946271667589325436, guid: e19e5fab527684957a531a7e3e861567, type: 3}
+  Poison_Prefab: {fileID: 6946271667589325436, guid: d9fcc0e713f1226489a71b0eb5cdd65b, type: 3}
   DashSpeed: 10
   DashDuration: 0.25
   DashCoolDown: 1

@@ -50,7 +50,7 @@ public class Poison_Controller : NetworkBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            other.gameObject.GetComponent<Player>().Hp -= damage;
+            other.gameObject.GetComponent<Player>().Hp -= damage*Time.deltaTime;
         }
     }
 }

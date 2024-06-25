@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 2728966489804139541}
   - component: {fileID: 7875672999834440898}
   - component: {fileID: 4199475638288346310}
-  - component: {fileID: 5444826432335748596}
   - component: {fileID: 1006442006334601235}
+  - component: {fileID: 5211857181118688517}
   m_Layer: 0
   m_Name: Poison
   m_TagString: Untagged
@@ -144,21 +144,6 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &5444826432335748596
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6946271667589325436}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da0b407a10c1047e890a04689151ca41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Effect: {fileID: 7882614690385981158, guid: b8fbc46f1a887ec47b411e027ea8624a, type: 3}
-  Explode_range: 10
-  damage: 10
 --- !u!114 &1006442006334601235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,3 +157,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
+--- !u!114 &5211857181118688517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6946271667589325436}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3fd21916d971b2438201b8e8c814974, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Effect: {fileID: 0}
+  Explode_range: 10
+  damage: 5
