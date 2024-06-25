@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.Mathematics;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -8,10 +9,11 @@ using Slider = UnityEngine.UI.Slider;
 
 public class Player : NetworkBehaviour
 {
+    private SpriteRenderer _spriteRenderer;
+    
     [Header("Player Default Setting")]
     public float _hp = 100;
     public float moveSpeed = 5f;
-    public float chargingMoveSpeed = 2f; // 차징 중 이동 속도
     
     private Rigidbody2D rb;
     public GameObject ProgressBarPref;
@@ -30,34 +32,17 @@ public class Player : NetworkBehaviour
         }
     }
 
-    
-    
     [Header("Weapon Prefabs")]
     [SerializeField] private GameObject Bomb_Prefab;
     
-    [Header("Charging Settings")]
-    [SerializeField] private float ChargeShotPower = 50f;
-    [SerializeField] private float maxChargeTime = 1.5f; 
-    private float chargeTime = 0f;
-    private bool isCharging = false; 
-    private bool isFullCharge = false;
+    [Header("Charging & Dash Settings")]
+    [SerializeField] private float DashSpeed = 10f;
+    [SerializeField] private float DashDuration = 0.2f;
+    [SerializeField] private float DashCoolDown = 1f;
+    private bool isDashing = false;
+    private float prevDashPassed = 0f;
     
-    [ServerRpc]
-    private void SetHpServerRpc(float hp)
-    {
-        _hp = hp;
-        SetHpClientRpc(hp);
-    }
-
-    [ClientRpc]
-    private void SetHpClientRpc(float hp)
-    {
-        if (!IsOwner)
-        {
-            _hp = hp;
-        }
-    }
-    
+    [Header("Scoring System")]
     public float _score=0;
     public float Score
     {
@@ -73,6 +58,22 @@ public class Player : NetworkBehaviour
             {
                 SetScoreServerRpc(value);
             }
+        }
+    }
+    
+    [ServerRpc]
+    private void SetHpServerRpc(float hp)
+    {
+        _hp = hp;
+        SetHpClientRpc(hp);
+    }
+
+    [ClientRpc]
+    private void SetHpClientRpc(float hp)
+    {
+        if (!IsOwner)
+        {
+            _hp = hp;
         }
     }
 
@@ -97,10 +98,16 @@ public class Player : NetworkBehaviour
     private void OnTriggerStay2D(Collider2D other)
     {
         if(IsOwner)
-            Score+=Time.deltaTime;
+            Score += Time.deltaTime;
     }
 
-    private SpriteRenderer _spriteRenderer;
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Weapon"))
+        {
+            _hp -= other.gameObject.GetComponent<WeaponManager>().damage;
+        }
+    }
 
     private void Start()
     {
@@ -111,8 +118,6 @@ public class Player : NetworkBehaviour
         {
             SpawnProgressBarServerRpc(OwnerClientId);
         }
-        
-        
     }
 
     [ServerRpc]
@@ -121,34 +126,28 @@ public class Player : NetworkBehaviour
         ProgressBar = NetworkManager.SpawnManager.InstantiateAndSpawn(ProgressBarPref.GetComponent<NetworkObject>(),
             clientId).gameObject;
         ProgressBar.GetComponent<NetworkObject>().TrySetParent(RelayManager.Instance.ProgressBarGroup.transform, false);
-        SpawnPregressBarClientRpc();
+        SpawnProgressBarClientRpc();
     }
 
     [ClientRpc]
-    private void SpawnPregressBarClientRpc()
+    private void SpawnProgressBarClientRpc()
     {
-        //if (IsOwner)
+        foreach (var networkObject in RelayManager.Instance.ProgressBarGroup.GetComponentsInChildren<NetworkObject>())
         {
-            //ProgressBar = NetworkManager.LocalClient.OwnedObjects[NetworkManager.LocalClient.OwnedObjects.Count - 1].gameObject;
-            foreach (var networkObject in RelayManager.Instance.ProgressBarGroup.GetComponentsInChildren<NetworkObject>())
-            {
-                if (networkObject.OwnerClientId == OwnerClientId)
-                    ProgressBar = networkObject.gameObject;
-
-            }
-            
-
+            if (networkObject.OwnerClientId == OwnerClientId)
+                ProgressBar = networkObject.gameObject;
         }
     }
+    
     private void Update()
     {
+        
         if (ProgressBar == null)
         {
             foreach (var networkObject in RelayManager.Instance.ProgressBarGroup.GetComponentsInChildren<NetworkObject>())
             {
                 if (networkObject.OwnerClientId == OwnerClientId)
                     ProgressBar = networkObject.gameObject;
-
             }
         }
         if (IsOwner)
@@ -173,53 +172,64 @@ public class Player : NetworkBehaviour
     {
         if (Input.GetKeyDown("k"))
         {
-            StartCharging();
+            isDashing = true;
+            prevDashPassed += Time.deltaTime;
         }
 
-        if (Input.GetKeyUp("k"))
-        {
-            ReleaseCharge();
-        }
-
-        if (isCharging)
-        {
-            chargeTime += Time.deltaTime;
-            if (chargeTime >= maxChargeTime)
-            {
-                isFullCharge = true;
-            }
-        }
     }
 
     private void Move()
     {
-        float speed = isCharging ? chargingMoveSpeed : moveSpeed;
-        float moveX = Input.GetAxis("Horizontal");
-        float moveY = Input.GetAxis("Vertical");
 
-        Vector3 move = new Vector3(moveX, moveY, 0) * speed;
-        if (move != Vector3.zero)
+        Vector2 movement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+        if (isDashing)
         {
-            rb.velocity = new Vector3(move.x, move.y, 0);
+            Vector2 prevVec = rb.velocity;
+            rb.velocity = Vector2.zero;
+            rb.AddForce(prevVec * DashSpeed, ForceMode2D.Impulse);
+            isDashing = false;
         }
+        else
+        {
+            rb.velocity = movement * moveSpeed;
+        }
+
     }
     
-
     private void Attack()
     {
         if (Input.GetKeyDown("i"))
         {
-            GameObject bomb = Instantiate(Bomb_Prefab);
+            GameObject bomb = Instantiate(Bomb_Prefab, transform.position, quaternion.identity);
             bomb.GetComponent<Bomb_Controller>().Invoke("Explode", 5);
         }
     }
+
+
+    [ServerRpc(RequireOwnership = false)]
+    public void InstantiateObjsServerRpc(Vector3 transform, Quaternion quaternion)
+    {
+        if (NetworkManager.Singleton != null && Bomb_Prefab != null)
+        {
+            GameObject gameobject = Instantiate(Bomb_Prefab, transform, quaternion);
+            NetworkObject networkObject = gameObject.GetComponent<NetworkObject>();
+            if (networkObject != null)
+            {
+                networkObject.Spawn(true);
+            }
+        }
+        
+        
+    }
+    
+
 
     [ServerRpc(RequireOwnership = false)]
     public void DamagedServerRpc(Vector3 dir, float damage)
     {
         DamagedClientRpc(dir, damage);
         gameObject.layer = 1;
-        _spriteRenderer.color = new Color(233, 233, 233, 250);
         StartCoroutine("BeVulnerable", 1);
     }
 
@@ -274,39 +284,4 @@ public class Player : NetworkBehaviour
         yield return null;
     }
     
-    public void StartCharging()
-    {
-        isCharging = true;
-        chargeTime = 0f;
-    }
-
-    public void ReleaseCharge()
-    {
-        isCharging = false;
-        bool isFullyCharged = isFullCharge;
-        isFullCharge = false;
-        chargeTime = 0f;
-
-        if (isFullyCharged)
-        {
-            ChargeShot();
-        }
-        else
-        {
-            ShortDash();
-        }
-    }
-
-    public void ChargeShot()
-    {
-        Vector2 dir = rb.velocity.normalized;
-        rb.AddForce(dir * ChargeShotPower, ForceMode2D.Impulse);
-    }
-
-    public void ShortDash()
-    {
-        Vector2 dir = rb.velocity.normalized;
-        float dashSpeed = 20f;
-        rb.velocity = dir * dashSpeed;
-    }
 }
