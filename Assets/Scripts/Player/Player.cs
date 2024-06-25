@@ -398,18 +398,19 @@ public class Player : NetworkBehaviour
 
         Vector2 movement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
-        if (isDashing&& prevDashPassed==0)
+        if (isDashing&& prevDashPassed==0&& !_isDashDelay)
         {
             Vector2 prevVec = rb.velocity;
             rb.AddForce(prevVec.normalized * DashSpeed, ForceMode2D.Impulse);
+            _isDashDelay = true;
+            Invoke(nameof(DashDelay),1);
         }
-        else if(!isDashing && !isKnocked&& movement.magnitude!=0&& !_isDashDelay)
+        else if(!isDashing && !isKnocked&& movement.magnitude!=0)
         {
             _animator.SetBool("Move",true);
             SetMoveClientRpc(true);
             rb.velocity = movement * moveSpeed;
-            _isDashDelay = true;
-            Invoke(nameof(DashDelay),1);
+            
         }
         else
         {
