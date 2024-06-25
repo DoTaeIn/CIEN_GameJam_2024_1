@@ -3,11 +3,15 @@ using System.Collections;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
+using Slider = UnityEngine.UI.Slider;
 
 public class Player : NetworkBehaviour
 {
     public float moveSpeed = 5f;
     private Rigidbody2D rb;
+    public GameObject ProgressBarPref;
+    public GameObject ProgressBar;
 
     public float _hp=100;
     public float Hp
@@ -38,19 +42,100 @@ public class Player : NetworkBehaviour
             _hp = hp;
         }
     }
-    private SpriteRenderer _spriteRenderer;
+    
+    public float _score=0;
+    public float Score
+    {
+        get
+        {
+            return _score;
+        }
+        set
+        {
+            _score = value;
+            ProgressBar.GetComponent<Slider>().value = value;
+            if (IsOwner)
+            {
+                SetScoreServerRpc(value);
+            }
+        }
+    }
 
-    private NetworkVariable<float> HP = new NetworkVariable<float>(100, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [ServerRpc]
+    private void SetScoreServerRpc(float score)
+    {
+        _score = score;
+        ProgressBar.GetComponent<Slider>().value = score;
+        SetScoreClientRpc(score);
+    }
+
+    [ClientRpc]
+    private void SetScoreClientRpc(float score)
+    {
+        if (!IsOwner)
+        {
+            _score = score;
+            ProgressBar.GetComponent<Slider>().value = score;
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if(IsOwner)
+            Score+=Time.deltaTime;
+    }
+
+    private SpriteRenderer _spriteRenderer;
 
     private void Start()
     {
+        //Debug.Log(OwnerClientId);
         rb = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-
+        if (IsOwner)
+        {
+            SpawnProgressBarServerRpc(OwnerClientId);
+        }
+        
+        
     }
 
+    [ServerRpc]
+    private void SpawnProgressBarServerRpc(ulong clientId)
+    {
+        ProgressBar = NetworkManager.SpawnManager.InstantiateAndSpawn(ProgressBarPref.GetComponent<NetworkObject>(),
+            clientId).gameObject;
+        ProgressBar.GetComponent<NetworkObject>().TrySetParent(RelayManager.Instance.ProgressBarGroup.transform, false);
+        SpawnPregressBarClientRpc();
+    }
+
+    [ClientRpc]
+    private void SpawnPregressBarClientRpc()
+    {
+        //if (IsOwner)
+        {
+            //ProgressBar = NetworkManager.LocalClient.OwnedObjects[NetworkManager.LocalClient.OwnedObjects.Count - 1].gameObject;
+            foreach (var networkObject in RelayManager.Instance.ProgressBarGroup.GetComponentsInChildren<NetworkObject>())
+            {
+                if (networkObject.OwnerClientId == OwnerClientId)
+                    ProgressBar = networkObject.gameObject;
+
+            }
+            
+
+        }
+    }
     private void Update()
     {
+        if (ProgressBar == null)
+        {
+            foreach (var networkObject in RelayManager.Instance.ProgressBarGroup.GetComponentsInChildren<NetworkObject>())
+            {
+                if (networkObject.OwnerClientId == OwnerClientId)
+                    ProgressBar = networkObject.gameObject;
+
+            }
+        }
         if (IsOwner)
         {
             //Move();
@@ -60,7 +145,7 @@ public class Player : NetworkBehaviour
                 {
                     if (a.GetHashCode() != gameObject.GetHashCode())
                     {
-                        Debug.Log("test`1");
+                        //Debug.Log("test`1");
                         Vector3 dir = a.transform.position - gameObject.transform.position;
                         a.GetComponent<Player>().DamagedServerRpc(dir, 1f);
                        
@@ -83,12 +168,6 @@ public class Player : NetworkBehaviour
             rb.velocity = new Vector3(move.x, move.y, 0);
         }
     }
-
-        // 네트워크에서 다른 클라이언트들에게 위치 업데이트
-        //UpdatePositionServerRpc(rb.position,rb.velocity);
-    }
-
-
     
     [ServerRpc(RequireOwnership = false)]
     public void DamagedServerRpc(Vector3 dir, float damage)
@@ -105,7 +184,7 @@ public class Player : NetworkBehaviour
     {
         if (IsOwner)
         {
-            rb.AddForce(dir*10,ForceMode2D.Impulse);
+            rb.AddForce(dir,ForceMode2D.Impulse);
             Hp -= damage;
             UpdatePositionServerRpc(rb.position,rb.velocity);
             
@@ -127,7 +206,7 @@ public class Player : NetworkBehaviour
         
             rb.position = position;
             rb.velocity = velocity;
-            Debug.Log(position);Debug.Log(velocity);
+            //Debug.Log(position);Debug.Log(velocity);
             UpdatePositionClientRpc(position,velocity);
         
         

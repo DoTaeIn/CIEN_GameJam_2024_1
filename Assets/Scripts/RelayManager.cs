@@ -20,9 +20,11 @@ public class RelayManager : NetworkBehaviour
     [SerializeField] private GameObject buttons;
     [SerializeField] private GameObject playerPrefab; // 플레이어 프리팹 추가
     [SerializeField] private NetworkTimer _timer;
+    public GameObject ProgressBarGroup;
 
     private UnityTransport transport;
     private const int MaxPlayers = 2;
+    public static RelayManager Instance;
 
     private async void Awake()
     {
@@ -35,6 +37,8 @@ public class RelayManager : NetworkBehaviour
 
         NetworkManager.Singleton.OnServerStarted += OnServerStarted;
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+
+        Instance = this;
     }
 
     private static async Task Authenticate()
