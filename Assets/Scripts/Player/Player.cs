@@ -213,9 +213,8 @@ public class Player : NetworkBehaviour
 
     private void Move()
     {
-
         Vector2 movement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-
+        
         if (isDashing)
         {
             Vector2 prevVec = rb.velocity;
@@ -316,5 +315,7 @@ public class Player : NetworkBehaviour
         Handles.DrawSolidArc(transform.position, Vector3.up, transform.forward, angle / 2, radius);
         Handles.DrawSolidArc(transform.position, Vector3.up, transform.forward, -angle / 2, radius);
     }
+    
+    x
     
 }
