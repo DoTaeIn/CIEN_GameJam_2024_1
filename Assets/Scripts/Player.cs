@@ -106,7 +106,7 @@ public class Player : NetworkBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-    }
+    
         if (IsOwner)
         {
             SpawnProgressBarServerRpc(OwnerClientId);
