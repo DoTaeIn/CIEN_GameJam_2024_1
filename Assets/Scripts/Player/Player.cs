@@ -18,7 +18,7 @@ public class Player : NetworkBehaviour
     [SerializeField]private Animator Attack_Animtor;
     
     
-    private bool isStoped;
+    public bool isStoped;
     
     [Header("Player Default Setting")]
     public float _hp = 100;
@@ -189,6 +189,7 @@ public class Player : NetworkBehaviour
                 if (!VARIABLE.GetComponent<NetworkObject>().IsOwner)
                 {
                     VARIABLE.GetComponent<Player>().theWorld();
+                    makeItStopServerRpc(true);
                 }
             }
         }
@@ -232,7 +233,6 @@ public class Player : NetworkBehaviour
         }
         
         Debug.Log(isCollision);
-        //Debug.Log(Attack_Animtor.gameObject.name);
 
         if (IsOwner)
         {
@@ -261,6 +261,7 @@ public class Player : NetworkBehaviour
         }
         
         
+        
         if (_score >= 100)
         {
             if (_respawnManager.isDone.Value == false)
@@ -279,9 +280,15 @@ public class Player : NetworkBehaviour
         }
         if (Hp <= 0)
         {
-            _respawnManager.RespawnCharacterServerRpc();
-            Destroy(gameObject);
+            Hp = 100;
+            transform.position = new Vector3(100, 100, 0);
+            isStoped = true;
+            Invoke("unStop", 3);
+            
+            
         }
+        
+        
         
         if (ProgressBar == null)
         {
@@ -321,6 +328,12 @@ public class Player : NetworkBehaviour
                 }
             }
         }
+    }
+
+    private void unStop()
+    {
+        transform.position = new Vector3(0, 0, 0);
+        isStoped = false;
     }
 
     private void SetFalseIsPushing()
@@ -445,16 +458,19 @@ public class Player : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if (IsOwner)
-        {
-            if(!isStoped)
+        if(!isStoped){
+            if (IsOwner)
+            {
+
                 Move();
-            
-            UpdatePositionServerRpc(rb.position, rb.velocity);
-        }
-        if (isDashing)
-        {
-            prevDashPassed += Time.deltaTime;
+
+                UpdatePositionServerRpc(rb.position, rb.velocity);
+            }
+
+            if (isDashing)
+            {
+                prevDashPassed += Time.deltaTime;
+            }
         }
     }
 
@@ -492,7 +508,28 @@ public class Player : NetworkBehaviour
     public void theWorld()
     {
         isStoped = true;
-        new WaitForSecondsRealtime(2);
+        Invoke("reverseTheWorld", 3);
+        
+    }
+
+    private void reverseTheWorld()
+    {
         isStoped = false;
+        makeItStopServerRpc(false);
+    }
+
+
+    [ServerRpc(RequireOwnership = false)]
+    private void makeItStopServerRpc(bool IsStop)
+    {
+        isStoped = IsStop;
+        makeItStopClientRpc(isStoped);
+    }
+    
+    [ClientRpc(RequireOwnership = false)]
+    private void makeItStopClientRpc(bool IsStop)
+    {
+        isStoped = IsStop;
+        
     }
 }

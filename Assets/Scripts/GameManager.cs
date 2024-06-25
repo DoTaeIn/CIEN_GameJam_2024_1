@@ -21,6 +21,12 @@ public class GameManager : NetworkBehaviour
         }
     }
 
+    [ClientRpc]
+    public void RespawnCharacterClientRpc()
+    {
+        NetworkObject gameobject = NetworkManager.SpawnManager.InstantiateAndSpawn(Player_Prefab.GetComponent<NetworkObject>(), OwnerClientId, false, false, false, new Vector3(0, 0, 0));
+    }
+
     [ServerRpc(RequireOwnership = false)]
     private void ImDoneServerRpc()
     {

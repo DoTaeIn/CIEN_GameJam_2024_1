@@ -39,7 +39,7 @@ public class Bomb_Controller : NetworkBehaviour
         
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void DestroyServerRpc()
     {
         GetComponent<NetworkObject>().Despawn(this.gameObject);
