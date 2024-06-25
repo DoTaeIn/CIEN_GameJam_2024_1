@@ -18,11 +18,13 @@ public class Bomb_Controller : MonoBehaviour
 
     private void Start()
     {
+        _circleCollider.enabled = false;
         Invoke("Explode", 5);
     }
 
     public void Explode()
     {
+        _circleCollider.enabled = true;
         _circleCollider.radius = Explode_range;
         Destroy(this.gameObject, 1f);
     }
