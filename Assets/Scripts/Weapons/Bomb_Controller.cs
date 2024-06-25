@@ -24,6 +24,7 @@ public class Bomb_Controller : MonoBehaviour
     public void Explode()
     {
         _circleCollider.radius = Explode_range;
+        Destroy(this.gameObject, 1f);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
