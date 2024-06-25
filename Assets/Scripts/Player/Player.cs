@@ -36,6 +36,10 @@ public class Player : NetworkBehaviour
     private Rigidbody2D rb;
     public GameObject ProgressBarPref;
     public GameObject ProgressBar;
+    public GameObject EliseHealthBarPref;
+    public GameObject RabbitHealthBarPref;
+    public GameObject EliseHealthBar;
+    public GameObject RabbitHealthBar;
 
     public float Hp
     {
@@ -163,6 +167,20 @@ public class Player : NetworkBehaviour
         ProgressBar = NetworkManager.SpawnManager.InstantiateAndSpawn(ProgressBarPref.GetComponent<NetworkObject>(),
             clientId).gameObject;
         ProgressBar.GetComponent<NetworkObject>().TrySetParent(RelayManager.Instance.ProgressBarGroup.transform, false);
+        
+
+        if (OwnerClientId == 0)
+        {
+            RabbitHealthBar=NetworkManager.SpawnManager.InstantiateAndSpawn(RabbitHealthBarPref.GetComponent<NetworkObject>(),
+                clientId).gameObject;
+            RabbitHealthBar.GetComponent<NetworkObject>().TrySetParent(RelayManager.Instance.HealthBarGroup.transform, false);
+        }
+        else
+        {
+            EliseHealthBar=NetworkManager.SpawnManager.InstantiateAndSpawn(EliseHealthBarPref.GetComponent<NetworkObject>(),
+                clientId).gameObject;
+            EliseHealthBar.GetComponent<NetworkObject>().TrySetParent(RelayManager.Instance.HealthBarGroup.transform, false);
+        }
         SpawnProgressBarClientRpc();
     }
 
@@ -181,6 +199,16 @@ public class Player : NetworkBehaviour
                 
             }
         }
+        
+        if (OwnerClientId == 0)
+        {
+            RabbitHealthBar=RelayManager.Instance.HealthBarGroup.GetComponentsInChildren<Image>()[0].gameObject;
+        }
+        else
+        {
+            EliseHealthBar=RelayManager.Instance.HealthBarGroup.GetComponentsInChildren<Image>()[2].gameObject;
+        }
+        
     }
 
     [ServerRpc]
@@ -190,6 +218,17 @@ public class Player : NetworkBehaviour
     }
     private void Update()
     {
+        if (OwnerClientId == 0 && RabbitHealthBar == null)
+        {
+            RabbitHealthBar=RelayManager.Instance.HealthBarGroup.GetComponentsInChildren<Image>()[0].gameObject;
+        }
+        if (RabbitHealthBar!=null)
+        {
+            RabbitHealthBar.transform.GetChild(0).GetComponent<Image>().fillAmount = _hp / 100;
+        }else if (EliseHealthBar != null)
+        {
+            EliseHealthBar.transform.GetChild(0).GetComponent<Image>().fillAmount = _hp / 100;
+        }
         if (Input.GetKeyDown("n")&& !_isPoisonDelay)
         {
             SpawnPoisonServerRpc();

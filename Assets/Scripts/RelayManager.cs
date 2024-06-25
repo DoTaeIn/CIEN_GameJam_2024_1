@@ -21,6 +21,7 @@ public class RelayManager : NetworkBehaviour
     [SerializeField] private GameObject playerPrefab; // 플레이어 프리팹 추가
     [SerializeField] private NetworkTimer _timer;
     public GameObject ProgressBarGroup;
+    public GameObject HealthBarGroup;
 
     private UnityTransport transport;
     private const int MaxPlayers = 2;

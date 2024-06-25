@@ -187,6 +187,10 @@ MonoBehaviour:
   Weapon: {fileID: 7834870739630387038}
   ProgressBarPref: {fileID: 6128503196257499576, guid: c99408748d11b2e478f84d09f122369d, type: 3}
   ProgressBar: {fileID: 0}
+  EliseHealthBarPref: {fileID: 1945525650125118969, guid: b3af1f7b29bd1ea4ab0cacf17f16effc, type: 3}
+  RabbitHealthBarPref: {fileID: 1349451263321214649, guid: c1c76fc47712a33438a98715713d78e4, type: 3}
+  EliseHealthBar: {fileID: 0}
+  RabbitHealthBar: {fileID: 0}
   Bomb_Prefab: {fileID: 6946271667589325436, guid: e19e5fab527684957a531a7e3e861567, type: 3}
   Poison_Prefab: {fileID: 6946271667589325436, guid: d9fcc0e713f1226489a71b0eb5cdd65b, type: 3}
   DashSpeed: 10
