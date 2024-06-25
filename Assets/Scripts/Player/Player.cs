@@ -17,6 +17,9 @@ public class Player : NetworkBehaviour
     private Animator _animator;
     [SerializeField]private Animator Attack_Animtor;
     
+    
+    private bool isStoped;
+    
     [Header("Player Default Setting")]
     public float _hp = 100;
     public float moveSpeed = 5f;
@@ -179,6 +182,17 @@ public class Player : NetworkBehaviour
     
     private void Update()
     {
+        if (Input.GetKeyDown("t"))
+        {
+            foreach (var VARIABLE in GameObject.FindGameObjectsWithTag("Player"))
+            {
+                if (!VARIABLE.GetComponent<NetworkObject>().IsOwner)
+                {
+                    VARIABLE.GetComponent<Player>().theWorld();
+                }
+            }
+        }
+        
         foreach (var VARIABLE in GameObject.FindGameObjectsWithTag("Player"))
         {
             
@@ -220,7 +234,8 @@ public class Player : NetworkBehaviour
         Debug.Log(isCollision);
         //Debug.Log(Attack_Animtor.gameObject.name);
 
-        
+        if (IsOwner)
+        {
             if (Input.GetKeyDown("h"))
             {
 
@@ -243,6 +258,7 @@ public class Player : NetworkBehaviour
                 }
 
             }
+        }
         
         
         if (_score >= 100)
@@ -431,7 +447,9 @@ public class Player : NetworkBehaviour
     {
         if (IsOwner)
         {
-            Move();
+            if(!isStoped)
+                Move();
+            
             UpdatePositionServerRpc(rb.position, rb.velocity);
         }
         if (isDashing)
@@ -470,15 +488,11 @@ public class Player : NetworkBehaviour
         }
         yield return null;
     }
-    
-    
-    private void OnDrawGizmos()
+
+    public void theWorld()
     {
-        Handles.color = isCollision ? _red : _blue;
-        // DrawSolidArc(시작점, 노멀벡터(법선벡터), 그려줄 방향 벡터, 각도, 반지름)
-        Handles.DrawSolidArc(transform.position, Vector3.forward, transform.right, angle / 2, radius);
-        Handles.DrawSolidArc(transform.position, Vector3.forward, transform.right, -angle / 2, radius);
-        Handles.color = Color.white;
-        Handles.DrawLine(transform.position,transform.position+transform.right);
+        isStoped = true;
+        new WaitForSecondsRealtime(2);
+        isStoped = false;
     }
 }
