@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 7133564977493758028}
   - component: {fileID: 6164159011184426719}
   - component: {fileID: 8292332781489949340}
+  - component: {fileID: 4488319538466708539}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -101,7 +102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 947446537
+  GlobalObjectIdHash: 738025563
   InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -122,6 +123,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8cec5d822aa84ee8a5a9d8bc090147f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Rabbit: {fileID: 9100000, guid: 9ff74e5dea845c347a59e00dc57d7c2f, type: 2}
+  Elise: {fileID: 22100000, guid: 7a8ddd901b693c44a8683735c055bf2b, type: 2}
   _hp: 100
   moveSpeed: 5
   ProgressBarPref: {fileID: 6128503196257499576, guid: c99408748d11b2e478f84d09f122369d, type: 3}
@@ -239,3 +242,24 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 3
+--- !u!95 &4488319538466708539
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6868934226339377862}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 22100000, guid: 7a8ddd901b693c44a8683735c055bf2b, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
