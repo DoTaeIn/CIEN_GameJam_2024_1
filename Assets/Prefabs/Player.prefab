@@ -184,6 +184,7 @@ MonoBehaviour:
   isStoped: 0
   _hp: 100
   moveSpeed: 5
+  Weapon: {fileID: 7834870739630387038}
   ProgressBarPref: {fileID: 6128503196257499576, guid: c99408748d11b2e478f84d09f122369d, type: 3}
   ProgressBar: {fileID: 0}
   Bomb_Prefab: {fileID: 6946271667589325436, guid: e19e5fab527684957a531a7e3e861567, type: 3}

@@ -30,6 +30,8 @@ public class Player : NetworkBehaviour
     bool isCollision = false;
     Color _blue = new Color(0f, 0f, 1f, 0.2f);
     Color _red = new Color(1f, 0f, 0f, 0.2f);
+
+    [SerializeField] private GameObject Weapon;
     
     private Rigidbody2D rb;
     public GameObject ProgressBarPref;
@@ -205,6 +207,22 @@ public class Player : NetworkBehaviour
                 }
             }
         }
+
+        // 입력 값을 받습니다.
+        Vector2 velo = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+        // 방향 벡터를 구합니다.
+        if (velo.magnitude > 0.1f)
+        {
+            // 벡터의 각도를 구합니다.
+            float angle = Mathf.Atan2(velo.y, velo.x) * Mathf.Rad2Deg;
+
+            // 객체의 회전을 설정합니다.
+            Quaternion newFace = Quaternion.Euler(new Vector3(0, 0, angle + 225f));
+
+            UpdateWeaponRotationServerRpc(newFace);
+        }
+        
         
         foreach (var VARIABLE in GameObject.FindGameObjectsWithTag("Player"))
         {
@@ -532,6 +550,21 @@ public class Player : NetworkBehaviour
             rb.position = position;
             rb.velocity = velocity;
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void UpdateWeaponRotationServerRpc(Quaternion rotation)
+    {
+        Weapon.gameObject.transform.rotation = rotation;
+        UpdateWeaponRotationClientRpc(rotation);
+    }
+    
+    [ClientRpc]
+    private void UpdateWeaponRotationClientRpc(Quaternion rotation)
+    {
+        if (!IsOwner)
+            Weapon.gameObject.transform.rotation = rotation;
+        
     }
 
     IEnumerator BeVulnerable()
