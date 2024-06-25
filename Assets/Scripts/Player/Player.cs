@@ -202,20 +202,25 @@ public class Player : NetworkBehaviour
     private void Update()
     {
         Debug.Log(isKnocked);
-        
+        Debug.Log(_score);
         if (_score >= 100)
         {
             if (_respawnManager.isDone.Value == false)
             {
+                Debug.Log(_respawnManager.isDone.Value );
                 if (IsHost)
                 {
-                    _respawnManager.isBlueWon.Value = true;
+                    _respawnManager.isDone.Value = true;
+                    _respawnManager.isBlueWon.Value = false;
                 }
                 else
                 {
-                    _respawnManager.isBlueWon.Value = false;
+                    _respawnManager.isDone.Value = true;
+                    _respawnManager.isBlueWon.Value = true;
                 }
             }
+            
+            
         }
         if (Hp <= 0)
         {
