@@ -88,7 +88,7 @@ public class MatchMakingManager : MonoBehaviour
         var joinCode = await RelayService.Instance.GetJoinCodeAsync(a.AllocationId);
 
         var options = new CreateLobbyOptions()
-        {
+        { 
             Data = new Dictionary<string, DataObject>
                 { { JoinCodeKey, new DataObject(DataObject.VisibilityOptions.Public, joinCode) } }
         };
