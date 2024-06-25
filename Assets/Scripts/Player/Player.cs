@@ -6,6 +6,8 @@ using Slider = UnityEngine.UI.Slider;
 
 public class Player : NetworkBehaviour
 {
+    public RuntimeAnimatorController Rabbit;
+    public RuntimeAnimatorController Elise;
     private SpriteRenderer _spriteRenderer;
     private RespawnManager _respawnManager;
     
@@ -155,6 +157,13 @@ public class Player : NetworkBehaviour
         {
             SpawnProgressBarServerRpc(OwnerClientId);
         }
+
+        if (OwnerClientId == 0)
+        {
+            GetComponent<Animator>().runtimeAnimatorController = Rabbit;
+            
+        }else if(OwnerClientId==1)
+            GetComponent<Animator>().runtimeAnimatorController = Elise;
     }
 
     [ServerRpc]
