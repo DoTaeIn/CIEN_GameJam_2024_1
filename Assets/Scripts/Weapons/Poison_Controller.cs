@@ -10,7 +10,7 @@ public class Poison_Controller : NetworkBehaviour
     public NetworkObject Effect;
 
     public int Explode_range = 10;
-    public int damage = 1;
+    public int damage = 5;
 
     private void Awake()
     {
@@ -46,11 +46,20 @@ public class Poison_Controller : NetworkBehaviour
         GetComponent<NetworkObject>().Despawn(this.gameObject);
     }
 
+    private bool _isDamageDelay;
+
     private void OnTriggerStay2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player")&& !_isDamageDelay)
         {
-            other.gameObject.GetComponent<Player>().Hp -= damage*Time.deltaTime;
+            _isDamageDelay = true;
+            other.gameObject.GetComponent<Player>().Hp -= damage;
+            Invoke(nameof(DamageDelay),0.5f);
         }
+    }
+
+    private void DamageDelay()
+    {
+        _isDamageDelay = false;
     }
 }
