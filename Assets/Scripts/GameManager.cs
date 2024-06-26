@@ -13,6 +13,8 @@ public class GameManager : NetworkBehaviour
     public NetworkVariable<bool> isBlueWon = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     [SerializeField] private GameObject[] Curtain;
+
+    private AudioSource _audioSource;
     
     [ServerRpc(RequireOwnership = false)]
     public void ChangeIsBlueWinServerRpc(bool value)
@@ -51,6 +53,11 @@ public class GameManager : NetworkBehaviour
         {
             NetworkObject gameobject = NetworkManager.SpawnManager.InstantiateAndSpawn(Player_Prefab.GetComponent<NetworkObject>(), OwnerClientId, false, false, false, new Vector3(0, 0, 0));
         }
+    }
+
+    private void Awake()
+    {
+        _audioSource = GetComponent<AudioSource>();
     }
 
     [ClientRpc]
@@ -181,7 +188,7 @@ public class GameManager : NetworkBehaviour
     {
         Curtain[0].transform.LeanMoveLocal(new Vector2(-650*3, 0), 2).setEaseOutQuart();
         Curtain[1].transform.LeanMoveLocal(new Vector2(650*3, 0), 2).setEaseOutQuart();
-        
+        _audioSource.Play();
         
     }
 }
