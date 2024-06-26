@@ -6278,6 +6278,7 @@ MonoBehaviour:
   Curtain:
   - {fileID: 388097440}
   - {fileID: 1542386366}
+  - {fileID: 246756339}
   dagger: {fileID: 1590877084}
   bomb: {fileID: 1196454329}
   poison: {fileID: 1328208573}

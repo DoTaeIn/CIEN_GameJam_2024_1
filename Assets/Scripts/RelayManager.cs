@@ -34,13 +34,14 @@ public class RelayManager : NetworkBehaviour
         Instance = this;
         transport = FindObjectOfType<UnityTransport>();
         buttons.SetActive(false);
-
-        await Authenticate();
-
         buttons.SetActive(true);
-
         NetworkManager.Singleton.OnServerStarted += OnServerStarted;
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+        await Authenticate();
+
+        
+
+        
 
         
     }
