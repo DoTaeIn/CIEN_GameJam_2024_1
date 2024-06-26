@@ -69,10 +69,17 @@ public class GameManager : NetworkBehaviour
         
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    private void StartGameServerRpc()
+    {
+        if (NetworkManager.ConnectedClientsList.Count == 2) StartGame();
+    }
+
     private void Update()
     {
-
-        if (NetworkManager.ConnectedClientsList.Count == 2) StartGame();
+        //NetworkManager
+        StartGameServerRpc();
+        
         
         
         if (isDone.Value)
