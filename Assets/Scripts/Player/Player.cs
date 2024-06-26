@@ -470,9 +470,7 @@ public class Player : NetworkBehaviour
         if (Input.GetKeyDown("k")&&!isDashing)
         {
             isDashing = true;
-        }else
-        
-        if (prevDashPassed> DashDuration)
+        }else if (prevDashPassed> DashDuration)
         {
             prevDashPassed = 0;
             isDashing = false;

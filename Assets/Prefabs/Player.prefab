@@ -308,7 +308,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 738025563
+  GlobalObjectIdHash: 947446537
   InScenePlacedSourceGlobalObjectIdHash: 947446537
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -345,7 +345,7 @@ MonoBehaviour:
   RabbitHealthBar: {fileID: 0}
   Bomb_Prefab: {fileID: 6946271667589325436, guid: e19e5fab527684957a531a7e3e861567, type: 3}
   Poison_Prefab: {fileID: 6946271667589325436, guid: d9fcc0e713f1226489a71b0eb5cdd65b, type: 3}
-  DashSpeed: 10
+  DashSpeed: 20
   DashDuration: 0.25
   DashCoolDown: 1
   _score: 0
