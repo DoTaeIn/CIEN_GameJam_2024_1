@@ -272,19 +272,7 @@ public class Player : NetworkBehaviour
         }
 
         // 입력 값을 받습니다.
-        Vector2 velo = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-
-        // 방향 벡터를 구합니다.
-        if (velo.magnitude > 0.1f)
-        {
-            // 벡터의 각도를 구합니다.
-            float angle = Mathf.Atan2(velo.y, velo.x) * Mathf.Rad2Deg;
-
-            // 객체의 회전을 설정합니다.
-            Quaternion newFace = Quaternion.Euler(new Vector3(0, 0, angle));
-
-            UpdateWeaponRotationServerRpc(newFace);
-        }
+        
         
         
         foreach (var VARIABLE in GameObject.FindGameObjectsWithTag("Player"))
@@ -339,7 +327,7 @@ public class Player : NetworkBehaviour
                         if (a.GetHashCode() != gameObject.GetHashCode())
                         {
                             a.GetComponent<Player>()
-                                .DamagedServerRpc((rb.velocity - a.GetComponent<Player>().rb.velocity).normalized, 10);
+                                .DamagedServerRpc((rb.velocity - a.GetComponent<Player>().rb.velocity).normalized, 20);
                         }
                     }
 
@@ -348,6 +336,19 @@ public class Player : NetworkBehaviour
                 else
                 {
                     SetDaggerServerRpc();
+                }
+                Vector2 velo = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+                // 방향 벡터를 구합니다.
+                if (velo.magnitude > 0.1f)
+                {
+                    // 벡터의 각도를 구합니다.
+                    float angle = Mathf.Atan2(velo.y, velo.x) * Mathf.Rad2Deg;
+
+                    // 객체의 회전을 설정합니다.
+                    Quaternion newFace = Quaternion.Euler(new Vector3(0, 0, angle));
+
+                    UpdateWeaponRotationServerRpc(newFace);
                 }
 
                 _isDaggerDelay = true;
@@ -570,7 +571,7 @@ public class Player : NetworkBehaviour
     {
         if (IsOwner)
         {
-            rb.AddForce(dir * 10, ForceMode2D.Impulse);
+            rb.AddForce(dir.normalized * 10, ForceMode2D.Impulse);
             Hp -= damage;
             isKnocked = true;
             UpdatePositionServerRpc(rb.position, rb.velocity);
