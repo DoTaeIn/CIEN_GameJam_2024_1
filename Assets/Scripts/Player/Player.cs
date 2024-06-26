@@ -83,6 +83,8 @@ public class Player : NetworkBehaviour
         set
         {
             _score = value;
+            if (value < 0)
+                _score = 0;
             ProgressBar.GetComponent<Slider>().value = value;
             if (IsOwner)
             {
@@ -378,6 +380,7 @@ public class Player : NetworkBehaviour
         if (Hp <= 0)
         {
             Hp = 100;
+            Score -= 10;
             transform.position = new Vector3(100, 100, 0);
             isStoped = true;
             Invoke("unStop", 3);
