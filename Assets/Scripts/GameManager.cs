@@ -170,7 +170,7 @@ public class GameManager : NetworkBehaviour
 
     public void ReStart()
     {
-        Destroy(NetworkManager.Singleton.gameObject());
+        Destroy(NetworkManager.Singleton.gameObject);
         
         
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
