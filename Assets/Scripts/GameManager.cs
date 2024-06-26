@@ -182,5 +182,6 @@ public class GameManager : NetworkBehaviour
         Curtain[0].transform.LeanMoveLocal(new Vector2(-650*3, 0), 2).setEaseOutQuart();
         Curtain[1].transform.LeanMoveLocal(new Vector2(650*3, 0), 2).setEaseOutQuart();
         
+        
     }
 }
