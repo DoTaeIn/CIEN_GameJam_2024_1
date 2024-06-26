@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : NetworkBehaviour
@@ -11,6 +12,8 @@ public class GameManager : NetworkBehaviour
     public NetworkVariable<bool> isDone = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public NetworkVariable<bool> isBlueWon = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
+    [SerializeField] private GameObject[] Curtain;
+    
     [ServerRpc(RequireOwnership = false)]
     public void ChangeIsBlueWinServerRpc(bool value)
     {
@@ -68,6 +71,10 @@ public class GameManager : NetworkBehaviour
 
     private void Update()
     {
+
+        if (NetworkManager.ConnectedClientsList.Count == 2) StartGame();
+        
+        
         if (isDone.Value)
         {
             if (isBlueWon.Value)
@@ -144,5 +151,18 @@ public class GameManager : NetworkBehaviour
             currentTime = 0; // Cooldown completed, reset timer
             isCooling = false; // Cooldown 끝남을 표시
         }
+    }
+
+    public void ReStart()
+    {
+        NetworkManager.Singleton.Shutdown();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void StartGame()
+    {
+        Curtain[0].transform.LeanMoveLocal(new Vector2(-650, 0), 1).setEaseOutQuart();
+        Curtain[1].transform.LeanMoveLocal(new Vector2(650, 0), 1).setEaseOutQuart();
+        
     }
 }
