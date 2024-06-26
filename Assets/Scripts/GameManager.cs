@@ -186,8 +186,11 @@ public class GameManager : NetworkBehaviour
     [ClientRpc]
     public void StartGameClientRpc()
     {
+        Curtain[2].SetActive(false);
+        
         Curtain[0].transform.LeanScale(Vector2.zero, 2).setEaseOutQuart();
         Curtain[1].transform.LeanScale(Vector2.zero, 2).setEaseOutQuart();
+        
         _audioSource.Play();
         
     }
