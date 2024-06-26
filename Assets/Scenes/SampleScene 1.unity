@@ -6286,7 +6286,6 @@ MonoBehaviour:
   winScreens:
   - {fileID: 1213944710}
   - {fileID: 400861217}
-  - {fileID: 246756339}
 --- !u!4 &1984115303
 Transform:
   m_ObjectHideFlags: 0
