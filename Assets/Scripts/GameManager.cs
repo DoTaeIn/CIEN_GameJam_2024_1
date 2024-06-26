@@ -177,10 +177,16 @@ public class GameManager : NetworkBehaviour
 
     public void ReStart()
     {
+        NetworkManager.Singleton.Shutdown();
         Destroy(NetworkManager.Singleton.gameObject);
         
+        Invoke(nameof(InvokeRestart),1);
         
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private void InvokeRestart()
+    {
+        SceneManager.LoadScene("SampleScene 1");
     }
     
     [ClientRpc]

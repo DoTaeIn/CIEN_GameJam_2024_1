@@ -31,6 +31,7 @@ public class RelayManager : NetworkBehaviour
 
     private async void Awake()
     {
+        Instance = this;
         transport = FindObjectOfType<UnityTransport>();
         buttons.SetActive(false);
 
@@ -41,7 +42,7 @@ public class RelayManager : NetworkBehaviour
         NetworkManager.Singleton.OnServerStarted += OnServerStarted;
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
 
-        Instance = this;
+        
     }
 
     private static async Task Authenticate()
