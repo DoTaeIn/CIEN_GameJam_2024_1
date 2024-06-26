@@ -62,6 +62,7 @@ public class GameManager : NetworkBehaviour
 
     private void Start()
     {
+        LeanTween.init( 1300 );
         dagger.fillAmount = 0;
         bomb.fillAmount = 0;
         time.fillAmount = 0;
@@ -69,16 +70,23 @@ public class GameManager : NetworkBehaviour
         
     }
 
+    private bool gameStart;
+
     [ServerRpc(RequireOwnership = false)]
     private void StartGameServerRpc()
     {
-        if (NetworkManager.ConnectedClientsList.Count == 2) StartGame();
+        if (NetworkManager.ConnectedClientsList.Count == 2)
+        {
+            gameStart = true;
+            StartGameClientRpc();
+        }
     }
 
     private void Update()
     {
         //NetworkManager
-        StartGameServerRpc();
+        if(!gameStart)
+            StartGameServerRpc();
         
         
         
@@ -165,11 +173,12 @@ public class GameManager : NetworkBehaviour
         NetworkManager.Singleton.Shutdown();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-
-    public void StartGame()
+    
+    [ClientRpc]
+    public void StartGameClientRpc()
     {
-        Curtain[0].transform.LeanMoveLocal(new Vector2(-650, 0), 1).setEaseOutQuart();
-        Curtain[1].transform.LeanMoveLocal(new Vector2(650, 0), 1).setEaseOutQuart();
+        Curtain[0].transform.LeanMoveLocal(new Vector2(-650*3, 0), 2).setEaseOutQuart();
+        Curtain[1].transform.LeanMoveLocal(new Vector2(650*3, 0), 2).setEaseOutQuart();
         
     }
 }
