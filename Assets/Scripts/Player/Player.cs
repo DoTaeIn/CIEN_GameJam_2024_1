@@ -46,6 +46,13 @@ public class Player : NetworkBehaviour
         }
         set
         {
+            if (IsOwner)
+            {
+                if (_hp > value)
+                {
+                    AudioSource.PlayOneShot(HitSound);
+                }
+            }
             _hp = value;
             if(IsOwner)
                 SetHpServerRpc(value);
@@ -89,6 +96,13 @@ public class Player : NetworkBehaviour
     [Header("Knokback System")] public bool isKnocked = false;
 
     [Header("Weapons")] private GameObject[] Weapons;
+
+    [Header(("Audio Source"))] public AudioSource AudioSource;
+
+    [Header(("Effect Sounds"))] 
+    public AudioClip DashSound;
+    public AudioClip HitSound;
+    public AudioClip Sound;
     
     [ServerRpc]
     private void SetHpServerRpc(float hp)
@@ -141,6 +155,7 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
+        AudioSource = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _respawnManager = FindObjectOfType<GameManager>();
@@ -474,6 +489,7 @@ public class Player : NetworkBehaviour
             Vector2 prevVec = rb.velocity;
             rb.AddForce(prevVec.normalized * DashSpeed, ForceMode2D.Impulse);
             _isDashDelay = true;
+            AudioSource.PlayOneShot(DashSound);
             Invoke(nameof(DashDelay),1);
         }
         else if(!isDashing && !isKnocked&& movement.magnitude!=0)
